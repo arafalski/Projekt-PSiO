@@ -1,9 +1,9 @@
 #include "character.hpp"
 
-sf::Vector2f Character::getPosition() {
-    return sf::Vector2f(body.getPosition().x, body.getPosition().y);
+sf::Vector2f Character::getPosition() const {
+    return body.getPosition();
 }
 
-void Character::draw(sf::RenderWindow &window) {
+void Character::draw(sf::RenderWindow &window) const {
     window.draw(body);
 }

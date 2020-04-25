@@ -11,9 +11,9 @@ protected:
 public:
     virtual void update(float deltaTime, sf::Vector2f targetPosition) = 0;
 
-    void draw(sf::RenderWindow &window);
+    void draw(sf::RenderWindow &window) const;
 
-    sf::Vector2f getPosition();
+    sf::Vector2f getPosition() const;
 };
 
 
