@@ -19,7 +19,11 @@ int main() {
 
     sf::Mouse::setPosition(sf::Vector2i(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), window);
 
-    Pacman player(100000.0f);
+    sf::Texture pacmanTexture;
+    if(!pacmanTexture.loadFromFile("../Assets/Images/pacman.png")){
+        return EXIT_FAILURE;
+    }
+    Pacman player(&pacmanTexture, 50000.0f);
 
     sf::Clock clock;
     float deltaTime = 0;
