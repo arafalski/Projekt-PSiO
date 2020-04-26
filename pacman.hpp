@@ -7,7 +7,7 @@
 
 class Pacman : public Character {
 public:
-    Pacman(sf::Texture* pacmanTexture, float speed);
+    Pacman(sf::Texture *pacmanTexture, sf::Vector2u imageCount, float switchTime, float speed);
 
     void update(float deltaTime, sf::Vector2f targetPosition) final;
 };

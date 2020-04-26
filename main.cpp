@@ -24,7 +24,7 @@ int main() {
     if(!pacmanTexture.loadFromFile("../Assets/Images/pacman.png")){
         return EXIT_FAILURE;
     }
-    Pacman player(&pacmanTexture, 50000.0f);
+    Pacman player(&pacmanTexture, sf::Vector2u(2, 1), 0.15f, 50000.0f);
 
     sf::Clock clock;
     float deltaTime = 0;

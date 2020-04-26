@@ -1,10 +1,9 @@
 #include "pacman.hpp"
 
-Pacman::Pacman(sf::Texture *pacmanTexture, float speed) {
-    this->speed = speed;
-
+Pacman::Pacman(sf::Texture *pacmanTexture, sf::Vector2u imageCount, float switchTime, float speed)
+        : Character(pacmanTexture, imageCount, switchTime, speed) {
     setSize(sf::Vector2f(40.0f, 40.0f));
-    setOrigin(getSize().x / 2, getSize().y / 2);
+    setOrigin(getSize() / 2.0f);
     setTexture(pacmanTexture);
 }
 
@@ -23,7 +22,10 @@ void Pacman::update(float deltaTime, sf::Vector2f targetPosition) {
         velocity.y *= -1;
     }
 
-    auto angle = static_cast<float>(atan2f(distance.x, -distance.y) * 180 / M_PI) - 90;
+    auto angle = static_cast<float>(atan2f(distance.x, -distance.y) * 180 / M_PI) - 90.0f;
     move(velocity * deltaTime);
     setRotation(angle);
+
+    animation.update(deltaTime);
+    setTextureRect(animation.uvRect);
 }
