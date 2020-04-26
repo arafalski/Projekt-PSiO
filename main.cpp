@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "pacman.hpp"
+#include <iostream>
 
 constexpr unsigned short WINDOW_HEIGHT = 600;
 constexpr unsigned short WINDOW_WIDTH = WINDOW_HEIGHT;
@@ -27,10 +28,20 @@ int main() {
 
     sf::Clock clock;
     float deltaTime = 0;
+    int count = 1; //TODO: DELETE - USED ONLY BY TEMP FPS COUNTER
 
     // game loop
     while (window.isOpen()) {
         deltaTime = clock.restart().asSeconds();
+
+        //TODO: DELETE - TEMP FPS COUNTER
+        if(count >= 60){
+            std::cout << "FPS: " << 1 / deltaTime << '\n';
+            count = 1;
+        }
+        else{
+            count++;
+        }
 
         // event loop
         sf::Event event;
@@ -50,7 +61,7 @@ int main() {
                                               window.mapPixelToCoords(sf::Mouse::getPosition(window)).y));
 
         window.clear();
-        player.draw(window);
+        window.draw(player);
         window.display();
     }
 

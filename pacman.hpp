@@ -9,7 +9,7 @@ class Pacman : public Character {
 public:
     Pacman(sf::Texture* pacmanTexture, float speed);
 
-    void update(float deltaTime, sf::Vector2f targetPosition);
+    void update(float deltaTime, sf::Vector2f targetPosition) final;
 };
 
 

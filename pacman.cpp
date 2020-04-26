@@ -3,13 +3,13 @@
 Pacman::Pacman(sf::Texture *pacmanTexture, float speed) {
     this->speed = speed;
 
-    body.setSize(sf::Vector2f(40.0f, 40.0f));
-    body.setOrigin(body.getSize().x / 2, body.getSize().y / 2);
-    body.setTexture(pacmanTexture);
+    setSize(sf::Vector2f(40.0f, 40.0f));
+    setOrigin(getSize().x / 2, getSize().y / 2);
+    setTexture(pacmanTexture);
 }
 
 void Pacman::update(float deltaTime, sf::Vector2f targetPosition) {
-    sf::Vector2f distance = targetPosition - body.getPosition();
+    sf::Vector2f distance = targetPosition - getPosition();
 
     velocity.y = sqrtf(
             (speed * powf(distance.y, 2.0f)) / (powf(distance.x, 2.0f) + powf(distance.y, 2.0f)));
@@ -24,6 +24,6 @@ void Pacman::update(float deltaTime, sf::Vector2f targetPosition) {
     }
 
     auto angle = static_cast<float>(atan2f(distance.x, -distance.y) * 180 / M_PI) - 90;
-    body.move(velocity * deltaTime);
-    body.setRotation(angle);
+    move(velocity * deltaTime);
+    setRotation(angle);
 }
