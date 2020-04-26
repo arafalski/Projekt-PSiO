@@ -1,9 +1,9 @@
 #include <SFML/Graphics.hpp>
+#include <vector>
 #include "pacman.hpp"
-#include <iostream>
-
-constexpr unsigned short WINDOW_HEIGHT = 600;
-constexpr unsigned short WINDOW_WIDTH = WINDOW_HEIGHT;
+#include "consts.hpp"
+#include "map.hpp"
+#include <iostream> //TODO: DELETE
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman");
@@ -25,6 +25,8 @@ int main() {
         return EXIT_FAILURE;
     }
     Pacman player(&pacmanTexture, sf::Vector2u(2, 1), 0.15f, 50000.0f);
+
+    std::vector<sf::RectangleShape> obstacles = generateMap();
 
     sf::Clock clock;
     float deltaTime = 0;
@@ -61,6 +63,9 @@ int main() {
                                               window.mapPixelToCoords(sf::Mouse::getPosition(window)).y));
 
         window.clear();
+        for(auto &box : obstacles){
+            window.draw(box);
+        }
         window.draw(player);
         window.display();
     }
