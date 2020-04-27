@@ -14,17 +14,17 @@ int main() {
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     window.setFramerateLimit(60);
     window.setVerticalSyncEnabled(true);
-
     sf::View view = window.getDefaultView();
     window.setView(view);
 
     sf::Mouse::setPosition(sf::Vector2i(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), window);
 
     sf::Texture pacmanTexture;
-    if(!pacmanTexture.loadFromFile("../Assets/Images/pacman.png")){
+    if (!pacmanTexture.loadFromFile("../Assets/Images/pacman.png")) {
         return EXIT_FAILURE;
     }
-    Pacman player(&pacmanTexture, sf::Vector2u(2, 1), 0.15f, 50000.0f);
+    Pacman player(&pacmanTexture, sf::Vector2u(2, 1), 0.15f, 200.0f);
+    view.setCenter(player.getPosition());
 
     std::vector<sf::RectangleShape> obstacles = generateMap();
 
@@ -37,11 +37,10 @@ int main() {
         deltaTime = clock.restart().asSeconds();
 
         //TODO: DELETE - TEMP FPS COUNTER
-        if(count >= 60){
+        if (count >= 60) {
             std::cout << "FPS: " << 1 / deltaTime << '\n';
             count = 1;
-        }
-        else{
+        } else {
             count++;
         }
 
@@ -62,8 +61,10 @@ int main() {
         player.update(deltaTime, sf::Vector2f(window.mapPixelToCoords(sf::Mouse::getPosition(window)).x,
                                               window.mapPixelToCoords(sf::Mouse::getPosition(window)).y));
 
+        view.setCenter(player.getPosition());
         window.clear();
-        for(auto &box : obstacles){
+        window.setView(view);
+        for (auto &box : obstacles) {
             window.draw(box);
         }
         window.draw(player);

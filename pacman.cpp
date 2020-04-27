@@ -10,9 +10,20 @@ Pacman::Pacman(sf::Texture *pacmanTexture, sf::Vector2u imageCount, float switch
 void Pacman::update(float deltaTime, sf::Vector2f targetPosition) {
     sf::Vector2f distance = targetPosition - getPosition();
 
-    velocity.y = sqrtf(
-            (speed * powf(distance.y, 2.0f)) / (powf(distance.x, 2.0f) + powf(distance.y, 2.0f)));
-    velocity.x = (std::abs(distance.x) * velocity.y) / std::abs(distance.y);
+    if (distance.x != 0 && distance.y != 0) {
+        velocity.y = sqrtf(
+                (powf(speed, 2.0f) * powf(distance.y, 2.0f)) / (powf(distance.x, 2.0f) + powf(distance.y, 2.0f)));
+        velocity.x = (std::abs(distance.x) * velocity.y) / std::abs(distance.y);
+    } else if (distance.x != 0) {
+        velocity.y = 0;
+        velocity.x = speed;
+    } else if (distance.y != 0) {
+        velocity.y = speed;
+        velocity.x = 0;
+    } else {
+        velocity.y = 0;
+        velocity.x = 0;
+    }
 
     if (distance.x < 0) {
         velocity.x *= -1;

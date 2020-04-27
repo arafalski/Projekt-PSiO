@@ -3,7 +3,7 @@
 
 constexpr unsigned short WINDOW_HEIGHT = 600;
 constexpr unsigned short WINDOW_WIDTH = 800;
-constexpr float TILE = 70.0f;
+constexpr float TILE = 80.0f;
 constexpr unsigned short MAP_WIDTH = 20;
 constexpr unsigned short MAP_HEIGHT = MAP_WIDTH;
 
