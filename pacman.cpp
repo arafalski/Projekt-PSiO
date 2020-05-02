@@ -1,7 +1,7 @@
 #include "pacman.hpp"
 
 Pacman::Pacman(sf::Texture *pacmanTexture, sf::Vector2u imageCount, float switchTime, float speed)
-        : speed(speed), animation(pacmanTexture, imageCount, switchTime){
+        : speed(speed), animation(pacmanTexture, imageCount, switchTime) {
     setSize(sf::Vector2f(40.0f, 40.0f));
     setOrigin(getSize() / 2.0f);
     setPosition(TILE, TILE);
@@ -43,11 +43,11 @@ void Pacman::update(float deltaTime, sf::Vector2f targetPosition) {
 }
 
 void Pacman::onCollision(sf::Vector2f direction) {
-    if(direction.x != 0.0f){
+    if (direction.x != 0.0f) {
         velocity.x = 0.0f;
     }
 
-    if(direction.y != 0.0f){
+    if (direction.y != 0.0f) {
         velocity.y = 0.0f;
     }
 }

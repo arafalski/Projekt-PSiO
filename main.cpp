@@ -31,12 +31,12 @@ int main() {
 
     sf::Clock clock;
     float deltaTime = 0;
-    int count = 1;
+    unsigned int count = 1;
 
     // game loop
     while (window.isOpen()) {
         deltaTime = clock.restart().asSeconds();
-        
+
         if (count >= 60) {
             window.setTitle("Pacman Maze | FPS: " + std::to_string(1 / deltaTime));
             count = 1;
@@ -56,16 +56,20 @@ int main() {
             }
         }
 
-//        player.update(deltaTime, sf::Vector2f(static_cast<float>(sf::Mouse::getPosition(window).x),
-//                                              static_cast<float>(sf::Mouse::getPosition(window).y)));
         player.update(deltaTime, sf::Vector2f(window.mapPixelToCoords(sf::Mouse::getPosition(window)).x,
                                               window.mapPixelToCoords(sf::Mouse::getPosition(window)).y));
         sf::Vector2f direction;
         Collider playerCollider = player.getCollider();
 
-        for(auto &box : obstacles){
-            if(box.getFillColor() == sf::Color::Blue && Collider(box).checkCollision(playerCollider, direction)){
+        for (auto &box : obstacles) {
+            if (box.getFillColor() == sf::Color::Blue && Collider(box).checkCollision(playerCollider, direction)) {
                 player.onCollision(direction);
+            } else if (box.getFillColor() == sf::Color::Red &&
+                       Collider(box).checkCollision(playerCollider, direction)) {
+                return EXIT_SUCCESS; //TODO: Add better ending scene than turning the game off :/
+            } else if (box.getFillColor() == sf::Color::Yellow &&
+                       Collider(box).checkCollision(playerCollider, direction)) {
+                box.setFillColor(sf::Color::Black);
             }
         }
 

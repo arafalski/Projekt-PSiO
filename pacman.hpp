@@ -14,6 +14,7 @@ class Pacman : public sf::RectangleShape {
     unsigned int rowOfTexture = 0;
 public:
     Pacman(sf::Texture *pacmanTexture, sf::Vector2u imageCount, float switchTime, float speed);
+
     ~Pacman() override = default;
 
     void update(float deltaTime, sf::Vector2f targetPosition);

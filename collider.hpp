@@ -5,16 +5,19 @@
 #include <cmath>
 
 class Collider {
-    sf::RectangleShape& body;
+    sf::RectangleShape &body;
 
 public:
-    explicit Collider(sf::RectangleShape& body);
+    explicit Collider(sf::RectangleShape &body);
+
     ~Collider() = default;
 
     void Move(float dx, float dy);
 
-    bool checkCollision(Collider& other, sf::Vector2f& direction);
+    bool checkCollision(Collider &other, sf::Vector2f &direction);
+
     sf::Vector2f getPosition();
+
     sf::Vector2f getHalfSize();
 };
 

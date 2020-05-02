@@ -25,6 +25,10 @@ std::vector<sf::RectangleShape> generateMap() {
                     obstacles.emplace_back(box);
                     break;
                 default:
+                    box.setFillColor(sf::Color::Yellow);
+                    box.setSize(sf::Vector2f(TILE / 4.0f, TILE / 4.0f));
+                    box.setOrigin(TILE / 8.0f, TILE / 8.0f);
+                    obstacles.emplace_back(box);
                     break;
             }
         }
