@@ -12,6 +12,7 @@ protected:
     unsigned int rowOfTexture = 0;
 public:
     Character(sf::Texture *texture, sf::Vector2u imageCount, float switchTime, float speed);
+    ~Character() override = default;
 
     virtual void update(float deltaTime, sf::Vector2f targetPosition) = 0;
 };

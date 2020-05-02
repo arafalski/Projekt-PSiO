@@ -1,12 +1,13 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <string>
 #include "pacman.hpp"
 #include "consts.hpp"
 #include "map.hpp"
 #include <iostream> //TODO: DELETE
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman Maze | FPS: 00.00");
     sf::Image icon;
     if (!icon.loadFromFile("../Assets/Images/icon.png")) {
         return EXIT_FAILURE;
@@ -38,7 +39,7 @@ int main() {
 
         //TODO: DELETE - TEMP FPS COUNTER
         if (count >= 60) {
-            std::cout << "FPS: " << 1 / deltaTime << '\n';
+            window.setTitle("Pacman Maze | FPS: " + std::to_string(1 / deltaTime));
             count = 1;
         } else {
             count++;

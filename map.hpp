@@ -8,7 +8,14 @@
 #include <chrono>
 #include "consts.hpp"
 
-std::array<std::array<short, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
+enum class Directions {
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT,
+};
+
+std::array<std::array<char, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
 
 std::vector<sf::RectangleShape> generateMap();
 
