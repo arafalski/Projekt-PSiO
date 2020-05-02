@@ -4,6 +4,7 @@ Pacman::Pacman(sf::Texture *pacmanTexture, sf::Vector2u imageCount, float switch
         : speed(speed), animation(pacmanTexture, imageCount, switchTime){
     setSize(sf::Vector2f(40.0f, 40.0f));
     setOrigin(getSize() / 2.0f);
+    setPosition(TILE, TILE);
     setTexture(pacmanTexture);
 }
 
@@ -39,4 +40,18 @@ void Pacman::update(float deltaTime, sf::Vector2f targetPosition) {
 
     animation.update(deltaTime);
     setTextureRect(animation.uvRect);
+}
+
+void Pacman::onCollision(sf::Vector2f direction) {
+    if(direction.x != 0.0f){
+        velocity.x = 0.0f;
+    }
+
+    if(direction.y != 0.0f){
+        velocity.y = 0.0f;
+    }
+}
+
+Collider Pacman::getCollider() {
+    return Collider(*this);
 }

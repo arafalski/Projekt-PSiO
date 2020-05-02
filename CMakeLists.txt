@@ -10,7 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(SFML_DIR "SFML/lib/cmake/SFML")
 find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
 
-add_executable(${PROJECT_NAME} main.cpp pacman.cpp pacman.hpp animation.cpp animation.hpp map.hpp consts.hpp map.cpp)
+add_executable(${PROJECT_NAME} main.cpp pacman.cpp pacman.hpp animation.cpp animation.hpp map.hpp consts.hpp map.cpp collider.cpp collider.hpp)
 
 target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-audio)
 set(CMAKE_EXE_LINKER_FLAGS "-static")

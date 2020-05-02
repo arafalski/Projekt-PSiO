@@ -10,6 +10,7 @@ std::vector<sf::RectangleShape> generateMap() {
             sf::RectangleShape box;
             box.setSize(sf::Vector2f(TILE, TILE));
             box.setPosition(static_cast<float>(j) * TILE, static_cast<float>(i) * TILE);
+            box.setOrigin(TILE / 2.0f, TILE / 2.0f);
             switch (cells[i][j]) {
                 case '#':
                     box.setFillColor(sf::Color::Blue);

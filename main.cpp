@@ -4,7 +4,7 @@
 #include "pacman.hpp"
 #include "consts.hpp"
 #include "map.hpp"
-#include <iostream> //TODO: DELETE
+#include "collider.hpp"
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman Maze | FPS: 00.00");
@@ -31,13 +31,12 @@ int main() {
 
     sf::Clock clock;
     float deltaTime = 0;
-    int count = 1; //TODO: DELETE - USED ONLY BY TEMP FPS COUNTER
+    int count = 1;
 
     // game loop
     while (window.isOpen()) {
         deltaTime = clock.restart().asSeconds();
-
-        //TODO: DELETE - TEMP FPS COUNTER
+        
         if (count >= 60) {
             window.setTitle("Pacman Maze | FPS: " + std::to_string(1 / deltaTime));
             count = 1;
@@ -61,6 +60,14 @@ int main() {
 //                                              static_cast<float>(sf::Mouse::getPosition(window).y)));
         player.update(deltaTime, sf::Vector2f(window.mapPixelToCoords(sf::Mouse::getPosition(window)).x,
                                               window.mapPixelToCoords(sf::Mouse::getPosition(window)).y));
+        sf::Vector2f direction;
+        Collider playerCollider = player.getCollider();
+
+        for(auto &box : obstacles){
+            if(box.getFillColor() == sf::Color::Blue && Collider(box).checkCollision(playerCollider, direction)){
+                player.onCollision(direction);
+            }
+        }
 
         view.setCenter(player.getPosition());
         window.clear();
