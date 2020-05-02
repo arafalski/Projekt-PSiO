@@ -6,16 +6,37 @@
 #include <vector>
 #include <random>
 #include <chrono>
+#include <stack>
 #include "consts.hpp"
 
-enum class Directions {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
+enum class Direction {
+    NORTH,
+    SOUTH,
+    EAST,
+    WEST
 };
 
-std::array<std::array<char, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
+class Cell {
+    bool visited = false;
+public:
+    std::array<std::array<char, 2>, 2> grid{{{'#', '#'}, {'#', ' '}}};
+
+    Cell() = default;
+
+    ~Cell() = default;
+
+    void visit() {
+        visited = true;
+    }
+
+    bool wasVisited() const {
+        return visited;
+    }
+};
+
+std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
+
+std::vector<std::vector<char>> mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> &maze);
 
 std::vector<sf::RectangleShape> generateMap();
 
