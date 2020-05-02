@@ -1,7 +1,7 @@
 #include "pacman.hpp"
 
 Pacman::Pacman(sf::Texture *pacmanTexture, sf::Vector2u imageCount, float switchTime, float speed)
-        : Character(pacmanTexture, imageCount, switchTime, speed) {
+        : speed(speed), animation(pacmanTexture, imageCount, switchTime){
     setSize(sf::Vector2f(40.0f, 40.0f));
     setOrigin(getSize() / 2.0f);
     setTexture(pacmanTexture);
