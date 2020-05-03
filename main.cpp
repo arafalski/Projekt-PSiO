@@ -7,7 +7,7 @@
 #include "collider.hpp"
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman Maze | FPS: 00.00");
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman Maze", sf::Style::Fullscreen);
     sf::Image icon;
     if (!icon.loadFromFile("../Assets/Images/icon.png")) {
         return EXIT_FAILURE;
@@ -17,6 +17,17 @@ int main() {
     window.setVerticalSyncEnabled(true);
     sf::View view = window.getDefaultView();
     window.setView(view);
+
+    sf::Font font;
+    if(!font.loadFromFile("../Assets/Arial.ttf")){
+        return EXIT_FAILURE;
+    }
+    sf::Text scoreText;
+    scoreText.setFont(font);
+    scoreText.setString("Time: 00.00s");
+    scoreText.setCharacterSize(20);
+    scoreText.setFillColor(sf::Color::White);
+    scoreText.setStyle(sf::Text::Bold);
 
     sf::Mouse::setPosition(sf::Vector2i(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), window);
 
@@ -31,17 +42,24 @@ int main() {
 
     sf::Clock clock;
     float deltaTime = 0;
-    unsigned int count = 1;
+    float playingTime = 0;
+    unsigned int counter = 1;
+    bool endTileHit = false;
 
     // game loop
     while (window.isOpen()) {
         deltaTime = clock.restart().asSeconds();
+        if(!endTileHit){
+            playingTime += deltaTime;
+        }
 
-        if (count >= 60) {
-            window.setTitle("Pacman Maze | FPS: " + std::to_string(1 / deltaTime));
-            count = 1;
-        } else {
-            count++;
+        std::string strPlayingTime = std::to_string(playingTime);
+
+        if(counter >= 10){
+            scoreText.setString("Time: " + strPlayingTime.substr(0, strPlayingTime.find('.') + 3) + "s");
+            counter = 1;
+        } else{
+            counter++;
         }
 
         // event loop
@@ -49,10 +67,6 @@ int main() {
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) {
                 window.close();
-            } else if (event.type == sf::Event::Resized) {
-                sf::FloatRect visibleArea(0.f, 0.f, static_cast<float>(event.size.width),
-                                          static_cast<float>(event.size.height));
-                window.setView(sf::View(visibleArea));
             }
         }
 
@@ -66,7 +80,7 @@ int main() {
                 player.onCollision(direction);
             } else if (box.getFillColor() == sf::Color::Red &&
                        Collider(box).checkCollision(playerCollider, direction)) {
-                return EXIT_SUCCESS; //TODO: Add better ending scene than turning the game off :/
+                endTileHit = true;
             } else if (box.getFillColor() == sf::Color::Yellow &&
                        Collider(box).checkCollision(playerCollider, direction)) {
                 box.setFillColor(sf::Color::Black);
@@ -74,12 +88,14 @@ int main() {
         }
 
         view.setCenter(player.getPosition());
+        scoreText.setPosition(player.getPosition().x + 20.0f, player.getPosition().y);
         window.clear();
         window.setView(view);
         for (auto &box : obstacles) {
             window.draw(box);
         }
         window.draw(player);
+        window.draw(scoreText);
         window.display();
     }
 
