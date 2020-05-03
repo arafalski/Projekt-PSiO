@@ -26,7 +26,7 @@ int main() {
     scoreText.setFont(font);
     scoreText.setString("Time: 00.00s");
     scoreText.setCharacterSize(20);
-    scoreText.setFillColor(sf::Color::White);
+    scoreText.setFillColor(sf::Color(255, 102, 0));
 
     sf::Mouse::setPosition(sf::Vector2i(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), window);
 
@@ -77,8 +77,7 @@ int main() {
         for (auto &box : obstacles) {
             if (box.getFillColor() == sf::Color::Blue && Collider(box).checkCollision(playerCollider, direction)) {
                 player.onCollision(direction);
-            } else if (box.getFillColor() == sf::Color::Red &&
-                       Collider(box).checkCollision(playerCollider, direction)) {
+            } else if (box.getFillColor() == sf::Color::Red && box.getGlobalBounds().intersects(player.getGlobalBounds())) {
                 endTileHit = true;
             } else if (box.getFillColor() == sf::Color::Yellow &&
                        Collider(box).checkCollision(playerCollider, direction)) {
