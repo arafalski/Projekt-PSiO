@@ -12,13 +12,13 @@ public:
 
     ~Collider() = default;
 
-    void Move(float dx, float dy);
+    void Move(const float &dx, const float &dy);
 
     bool checkCollision(Collider &other, sf::Vector2f &direction);
 
-    sf::Vector2f getPosition();
+    sf::Vector2f getPosition() const;
 
-    sf::Vector2f getHalfSize();
+    sf::Vector2f getHalfSize() const;
 };
 
 #endif //PROJEKT_COLLIDER_HPP

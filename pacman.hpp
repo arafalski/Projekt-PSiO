@@ -13,13 +13,13 @@ class Pacman : public sf::RectangleShape {
     Animation animation;
     unsigned int rowOfTexture = 0;
 public:
-    Pacman(sf::Texture *pacmanTexture, sf::Vector2u imageCount, float switchTime, float speed);
+    Pacman(sf::Texture *pacmanTexture, const sf::Vector2u &imageCount, const float &switchTime, const float &speed);
 
     ~Pacman() override = default;
 
-    void update(float deltaTime, sf::Vector2f targetPosition);
+    void update(const float &deltaTime, const sf::Vector2f &targetPosition);
 
-    void onCollision(sf::Vector2f direction);
+    void onCollision(const sf::Vector2f &direction);
 
     Collider getCollider();
 };

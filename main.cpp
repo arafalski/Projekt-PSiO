@@ -5,41 +5,11 @@
 #include "consts.hpp"
 #include "map.hpp"
 #include "collider.hpp"
-
-void finalScreen(sf::RenderWindow &window, sf::Image &icon, sf::Font &font, const std::string &strPlayingTime) {
-    window.create(sf::VideoMode(450, 200), "Pacman Maze", sf::Style::Close);
-    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
-    sf::Text victoryText;
-    victoryText.setFont(font);
-    victoryText.setString("Victory!!!");
-    victoryText.setCharacterSize(100);
-    victoryText.setFillColor(sf::Color::Red);
-    victoryText.setPosition(static_cast<float>(window.getSize().x / 2) - victoryText.getGlobalBounds().width / 2, 0.0f);
-
-    sf::Text timeText;
-    timeText.setFont(font);
-    timeText.setString("Time: " + strPlayingTime.substr(0, strPlayingTime.find('.') + 3) + "s");
-    timeText.setCharacterSize(50);
-    timeText.setFillColor(sf::Color::Green);
-    timeText.setPosition(static_cast<float>(window.getSize().x / 2) - timeText.getGlobalBounds().width / 2,
-                         victoryText.getGlobalBounds().height + 15);
-
-    while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed) {
-                window.close();
-            }
-        }
-        window.clear();
-        window.draw(victoryText);
-        window.draw(timeText);
-        window.display();
-    }
-}
+#include "screens.hpp"
+#include "configuration.hpp"
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman Maze", sf::Style::Close);
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman Maze", sf::Style::Fullscreen);
     sf::Image icon;
     if (!icon.loadFromFile("../Assets/Images/icon.png")) {
         return EXIT_FAILURE;
@@ -55,12 +25,7 @@ int main() {
         return EXIT_FAILURE;
     }
     sf::Text scoreText;
-    scoreText.setFont(font);
-    scoreText.setString("Time: 00.00s");
-    scoreText.setCharacterSize(20);
-    scoreText.setFillColor(sf::Color(255, 102, 0));
-
-    sf::Mouse::setPosition(sf::Vector2i(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), window);
+    textConfig(scoreText, font, "Time: 00.00s", 20, sf::Color(255, 102, 0));
 
     sf::Texture pacmanTexture;
     if (!pacmanTexture.loadFromFile("../Assets/Images/pacman.png")) {
@@ -70,6 +35,10 @@ int main() {
     view.setCenter(player.getPosition());
 
     std::vector<sf::RectangleShape> obstacles = generateMap();
+
+    mainMenu(window, font);
+
+    sf::Mouse::setPosition(sf::Vector2i(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), window);
 
     sf::Clock clock;
     float deltaTime = 0;

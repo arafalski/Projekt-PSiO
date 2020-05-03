@@ -2,7 +2,7 @@
 
 Collider::Collider(sf::RectangleShape &body) : body(body) {}
 
-void Collider::Move(float dx, float dy) {
+void Collider::Move(const float &dx, const float &dy) {
     body.move(dx, dy);
 }
 
@@ -55,10 +55,10 @@ bool Collider::checkCollision(Collider &other, sf::Vector2f &direction) {
     return false;
 }
 
-sf::Vector2f Collider::getPosition() {
+sf::Vector2f Collider::getPosition() const {
     return body.getPosition();
 }
 
-sf::Vector2f Collider::getHalfSize() {
+sf::Vector2f Collider::getHalfSize() const {
     return body.getSize() / 2.0f;
 }

@@ -1,6 +1,6 @@
 #include "pacman.hpp"
 
-Pacman::Pacman(sf::Texture *pacmanTexture, sf::Vector2u imageCount, float switchTime, float speed)
+Pacman::Pacman(sf::Texture *pacmanTexture, const sf::Vector2u &imageCount, const float &switchTime, const float &speed)
         : speed(speed), animation(pacmanTexture, imageCount, switchTime) {
     setSize(sf::Vector2f(40.0f, 40.0f));
     setOrigin(getSize() / 2.0f);
@@ -8,7 +8,7 @@ Pacman::Pacman(sf::Texture *pacmanTexture, sf::Vector2u imageCount, float switch
     setTexture(pacmanTexture);
 }
 
-void Pacman::update(float deltaTime, sf::Vector2f targetPosition) {
+void Pacman::update(const float &deltaTime, const sf::Vector2f &targetPosition) {
     sf::Vector2f distance = targetPosition - getPosition();
 
     if (distance.x != 0 && distance.y != 0) {
@@ -42,7 +42,7 @@ void Pacman::update(float deltaTime, sf::Vector2f targetPosition) {
     setTextureRect(animation.uvRect);
 }
 
-void Pacman::onCollision(sf::Vector2f direction) {
+void Pacman::onCollision(const sf::Vector2f &direction) {
     if (direction.x != 0.0f) {
         velocity.x = 0.0f;
     }
