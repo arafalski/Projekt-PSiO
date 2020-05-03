@@ -19,7 +19,7 @@ int main() {
     window.setView(view);
 
     sf::Font font;
-    if(!font.loadFromFile("../Assets/Arial.ttf")){
+    if(!font.loadFromFile("../Assets/Roboto-Black.ttf")){
         return EXIT_FAILURE;
     }
     sf::Text scoreText;
@@ -27,7 +27,6 @@ int main() {
     scoreText.setString("Time: 00.00s");
     scoreText.setCharacterSize(20);
     scoreText.setFillColor(sf::Color::White);
-    scoreText.setStyle(sf::Text::Bold);
 
     sf::Mouse::setPosition(sf::Vector2i(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), window);
 
