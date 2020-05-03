@@ -17,12 +17,22 @@ void mainMenu(sf::RenderWindow &window, const sf::Font &font) {
                            static_cast<float>(window.getSize().y) / 2.0f);
     playButton.setFillColor(sf::Color::Red);
 
+    sf::Text playButtonText;
+    textConfig(playButtonText, font, "Play", 60, sf::Color::Green);
+    playButtonText.setPosition(playButton.getPosition().x - playButtonText.getGlobalBounds().width / 2,
+                               playButton.getPosition().y - playButtonText.getGlobalBounds().height / 2 - 15);
+
     sf::RectangleShape closeButton;
     closeButton.setSize(sf::Vector2f(200.0f, 75.0f));
     closeButton.setOrigin(closeButton.getSize() / 2.0f);
     closeButton.setPosition(static_cast<float>(window.getSize().x) / 2.0f,
                             static_cast<float>(window.getSize().y) / 2.0f + 100);
     closeButton.setFillColor(sf::Color::Yellow);
+
+    sf::Text closeButtonText;
+    textConfig(closeButtonText, font, "Exit", 60, sf::Color::Blue);
+    closeButtonText.setPosition(closeButton.getPosition().x - closeButtonText.getGlobalBounds().width / 2,
+                               closeButton.getPosition().y - closeButtonText.getGlobalBounds().height / 2 - 15);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -44,7 +54,9 @@ void mainMenu(sf::RenderWindow &window, const sf::Font &font) {
         window.clear();
         window.draw(gameName);
         window.draw(playButton);
+        window.draw(playButtonText);
         window.draw(closeButton);
+        window.draw(closeButtonText);
         window.display();
     }
 }
