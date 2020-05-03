@@ -6,8 +6,40 @@
 #include "map.hpp"
 #include "collider.hpp"
 
+void finalScreen(sf::RenderWindow &window, sf::Image &icon, sf::Font &font, const std::string &strPlayingTime) {
+    window.create(sf::VideoMode(450, 200), "Pacman Maze", sf::Style::Close);
+    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+    sf::Text victoryText;
+    victoryText.setFont(font);
+    victoryText.setString("Victory!!!");
+    victoryText.setCharacterSize(100);
+    victoryText.setFillColor(sf::Color::Red);
+    victoryText.setPosition(static_cast<float>(window.getSize().x / 2) - victoryText.getGlobalBounds().width / 2, 0.0f);
+
+    sf::Text timeText;
+    timeText.setFont(font);
+    timeText.setString("Time: " + strPlayingTime.substr(0, strPlayingTime.find('.') + 3) + "s");
+    timeText.setCharacterSize(50);
+    timeText.setFillColor(sf::Color::Green);
+    timeText.setPosition(static_cast<float>(window.getSize().x / 2) - timeText.getGlobalBounds().width / 2,
+                         victoryText.getGlobalBounds().height + 15);
+
+    while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event)) {
+            if (event.type == sf::Event::Closed) {
+                window.close();
+            }
+        }
+        window.clear();
+        window.draw(victoryText);
+        window.draw(timeText);
+        window.display();
+    }
+}
+
 int main() {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman Maze", sf::Style::Fullscreen);
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman Maze", sf::Style::Close);
     sf::Image icon;
     if (!icon.loadFromFile("../Assets/Images/icon.png")) {
         return EXIT_FAILURE;
@@ -19,7 +51,7 @@ int main() {
     window.setView(view);
 
     sf::Font font;
-    if(!font.loadFromFile("../Assets/Roboto-Black.ttf")){
+    if (!font.loadFromFile("../Assets/Roboto-Black.ttf")) {
         return EXIT_FAILURE;
     }
     sf::Text scoreText;
@@ -48,16 +80,16 @@ int main() {
     // game loop
     while (window.isOpen()) {
         deltaTime = clock.restart().asSeconds();
-        if(!endTileHit){
+        if (!endTileHit) {
             playingTime += deltaTime;
         }
 
         std::string strPlayingTime = std::to_string(playingTime);
 
-        if(counter >= 10){
+        if (counter >= 10) {
             scoreText.setString("Time: " + strPlayingTime.substr(0, strPlayingTime.find('.') + 3) + "s");
             counter = 1;
-        } else{
+        } else {
             counter++;
         }
 
@@ -77,12 +109,17 @@ int main() {
         for (auto &box : obstacles) {
             if (box.getFillColor() == sf::Color::Blue && Collider(box).checkCollision(playerCollider, direction)) {
                 player.onCollision(direction);
-            } else if (box.getFillColor() == sf::Color::Red && box.getGlobalBounds().intersects(player.getGlobalBounds())) {
+            } else if (box.getFillColor() == sf::Color::Red &&
+                       box.getGlobalBounds().intersects(player.getGlobalBounds())) {
                 endTileHit = true;
             } else if (box.getFillColor() == sf::Color::Yellow &&
                        Collider(box).checkCollision(playerCollider, direction)) {
                 box.setFillColor(sf::Color::Black);
             }
+        }
+
+        if (endTileHit) {
+            finalScreen(window, icon, font, strPlayingTime);
         }
 
         view.setCenter(player.getPosition());
