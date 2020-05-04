@@ -24,8 +24,8 @@ int main() {
     if (!font.loadFromFile("../Assets/Roboto-Black.ttf")) {
         return EXIT_FAILURE;
     }
-    sf::Text scoreText;
-    textConfig(scoreText, font, "Time: 00.00s", 20, sf::Color(255, 102, 0));
+    sf::Text timeText;
+    textConfig(timeText, font, "Time: 00.00s", 20, sf::Color(255, 102, 0));
 
     sf::Texture pacmanTexture;
     if (!pacmanTexture.loadFromFile("../Assets/Images/pacman.png")) {
@@ -56,7 +56,7 @@ int main() {
         std::string strPlayingTime = std::to_string(playingTime);
 
         if (counter >= 10) {
-            scoreText.setString("Time: " + strPlayingTime.substr(0, strPlayingTime.find('.') + 3) + "s");
+            timeText.setString("Time: " + strPlayingTime.substr(0, strPlayingTime.find('.') + 3) + "s");
             counter = 1;
         } else {
             counter++;
@@ -92,14 +92,14 @@ int main() {
         }
 
         view.setCenter(player.getPosition());
-        scoreText.setPosition(player.getPosition().x + 20.0f, player.getPosition().y);
+        timeText.setPosition(player.getPosition().x + 20.0f, player.getPosition().y);
         window.clear();
         window.setView(view);
         for (auto &box : obstacles) {
             window.draw(box);
         }
         window.draw(player);
-        window.draw(scoreText);
+        window.draw(timeText);
         window.display();
     }
 
