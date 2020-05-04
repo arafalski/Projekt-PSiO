@@ -7,6 +7,7 @@
 #include <string>
 #include <algorithm>
 #include "configuration.hpp"
+#include "leaderboard.hpp"
 
 #include <iostream>
 
@@ -67,37 +68,6 @@ void mainMenu(sf::RenderWindow &window, const sf::Font &font) {
     }
 }
 
-std::vector<float> leaderboardUpdate(const std::string &strPlayingTime){
-    std::fstream leaderboardInputFile("leaderboard.txt", std::ios::in);
-    std::vector<float> leaderBoard;
-
-    if (leaderboardInputFile.is_open()) {
-        while (!leaderboardInputFile.eof()) {
-            std::string time;
-            std::getline(leaderboardInputFile, time);
-            leaderBoard.emplace_back(std::stof(time));
-        }
-    }
-    leaderboardInputFile.close();
-
-    leaderBoard.emplace_back(std::stof(strPlayingTime));
-
-    std::sort(leaderBoard.begin(), leaderBoard.end());
-
-    std::fstream leaderboardOutputFile("leaderboard.txt", std::ios::out);
-    if(leaderboardOutputFile.is_open()){
-        for (unsigned int i = 0; i < leaderBoard.size() && i < 5; i++){
-            leaderboardOutputFile << leaderBoard[i];
-            if(i < leaderBoard.size() - 1 && i < 4){
-                leaderboardOutputFile << '\n';
-            }
-        }
-    }
-    leaderboardOutputFile.close();
-
-    return leaderBoard;
-}
-
 void
 finalScreen(sf::RenderWindow &window, const sf::Image &icon, const sf::Font &font, const std::string &strPlayingTime) {
     window.create(sf::VideoMode(450, 520), "Pacman Maze", sf::Style::Close);
@@ -114,7 +84,9 @@ finalScreen(sf::RenderWindow &window, const sf::Image &icon, const sf::Font &fon
     timeText.setPosition(static_cast<float>(window.getSize().x) / 2.0f - timeText.getGlobalBounds().width / 2.0f,
                          victoryText.getGlobalBounds().height + 15);
 
-    std::vector<float> topTimes = leaderboardUpdate(strPlayingTime);
+    Leaderboard::update(strPlayingTime);
+    std::vector<float> topTimes = Leaderboard::getBestTimes();
+
     std::string bestTimes = "Best times:\n";
     for(auto &time : topTimes){
         std::string strTime = std::to_string(time);
