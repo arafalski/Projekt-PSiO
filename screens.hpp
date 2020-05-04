@@ -84,8 +84,8 @@ finalScreen(sf::RenderWindow &window, const sf::Image &icon, const sf::Font &fon
     timeText.setPosition(static_cast<float>(window.getSize().x) / 2.0f - timeText.getGlobalBounds().width / 2.0f,
                          victoryText.getGlobalBounds().height + 15);
 
-    Leaderboard::update(strPlayingTime);
-    std::vector<float> topTimes = Leaderboard::getBestTimes();
+    Leaderboard leaderboard(strPlayingTime);
+    auto topTimes = leaderboard.getBestTimes();
 
     std::string bestTimes = "Best times:\n";
     for(auto &time : topTimes){

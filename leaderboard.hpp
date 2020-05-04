@@ -7,10 +7,10 @@
 #include <algorithm>
 
 class Leaderboard {
-    static std::vector<float> bestTimes;
+    std::vector<float> bestTimes;
 public:
-    static void update(const std::string &strPlayingTime);
-    static std::vector<float> getBestTimes();
+    explicit Leaderboard(const std::string &strPlayingTime);
+    std::vector<float> getBestTimes() const;
 };
 
 
