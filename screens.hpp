@@ -67,7 +67,7 @@ void mainMenu(sf::RenderWindow &window, const sf::Font &font) {
     }
 }
 
-void leaderboardUpdate(const std::string &strPlayingTime){
+std::vector<float> leaderboardUpdate(const std::string &strPlayingTime){
     std::fstream leaderboardInputFile("leaderboard.txt", std::ios::in);
     std::vector<float> leaderBoard;
 
@@ -94,11 +94,13 @@ void leaderboardUpdate(const std::string &strPlayingTime){
         }
     }
     leaderboardOutputFile.close();
+
+    return leaderBoard;
 }
 
 void
 finalScreen(sf::RenderWindow &window, const sf::Image &icon, const sf::Font &font, const std::string &strPlayingTime) {
-    window.create(sf::VideoMode(450, 200), "Pacman Maze", sf::Style::Close);
+    window.create(sf::VideoMode(450, 520), "Pacman Maze", sf::Style::Close);
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     sf::Text victoryText;
@@ -107,12 +109,21 @@ finalScreen(sf::RenderWindow &window, const sf::Image &icon, const sf::Font &fon
                             0.0f);
 
     sf::Text timeText;
-    textConfig(timeText, font, "Time: " + strPlayingTime.substr(0, strPlayingTime.find('.') + 3) + "s", 50,
+    textConfig(timeText, font, "Your time: " + strPlayingTime.substr(0, strPlayingTime.find('.') + 3) + "s", 50,
                sf::Color::Green);
     timeText.setPosition(static_cast<float>(window.getSize().x) / 2.0f - timeText.getGlobalBounds().width / 2.0f,
                          victoryText.getGlobalBounds().height + 15);
 
-    leaderboardUpdate(strPlayingTime);
+    std::vector<float> topTimes = leaderboardUpdate(strPlayingTime);
+    std::string bestTimes = "Best times:\n";
+    for(auto &time : topTimes){
+        std::string strTime = std::to_string(time);
+        bestTimes += strTime.substr(0, strTime.find('.') + 3);
+        bestTimes += "s\n";
+    }
+    sf::Text leaderBoardText;
+    textConfig(leaderBoardText, font, bestTimes, 50, sf::Color::Yellow);
+    leaderBoardText.setPosition(0, victoryText.getGlobalBounds().height + 70);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -124,6 +135,7 @@ finalScreen(sf::RenderWindow &window, const sf::Image &icon, const sf::Font &fon
         window.clear();
         window.draw(victoryText);
         window.draw(timeText);
+        window.draw(leaderBoardText);
         window.display();
     }
 }
