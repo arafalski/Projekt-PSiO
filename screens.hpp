@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-void mainMenu(sf::RenderWindow &window, const sf::Font &font) {
+inline void mainMenu(sf::RenderWindow &window, const sf::Font &font) {
     sf::Text gameName;
     textConfig(gameName, font, "Pacman Maze", 100, sf::Color::Green);
     gameName.setPosition(static_cast<float>(window.getSize().x) / 2.0f - gameName.getGlobalBounds().width / 2.0f,
@@ -68,13 +68,13 @@ void mainMenu(sf::RenderWindow &window, const sf::Font &font) {
     }
 }
 
-void
+inline void
 finalScreen(sf::RenderWindow &window, const sf::Image &icon, const sf::Font &font, const std::string &strPlayingTime) {
     window.create(sf::VideoMode(450, 520), "Pacman Maze", sf::Style::Close);
     window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     sf::Text victoryText;
-    textConfig(victoryText, font, "Victory!!!", 100, sf::Color::Red);
+    textConfig(victoryText, font, "Win!!!", 100, sf::Color::Red);
     victoryText.setPosition(static_cast<float>(window.getSize().x) / 2.0f - victoryText.getGlobalBounds().width / 2.0f,
                             0.0f);
 

@@ -12,7 +12,7 @@ public:
 
     ~Collider() = default;
 
-    void Move(const float &dx, const float &dy);
+    void move(const float &dx, const float &dy);
 
     bool checkCollision(Collider &other, sf::Vector2f &direction);
 

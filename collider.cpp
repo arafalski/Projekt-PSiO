@@ -2,7 +2,7 @@
 
 Collider::Collider(sf::RectangleShape &body) : body(body) {}
 
-void Collider::Move(const float &dx, const float &dy) {
+void Collider::move(const float &dx, const float &dy) {
     body.move(dx, dy);
 }
 
@@ -21,28 +21,28 @@ bool Collider::checkCollision(Collider &other, sf::Vector2f &direction) {
     if (intersectX < 0.0f && intersectY < 0.0f) {
         if (intersectX > intersectY) {
             if (deltaX > 0.0f) {
-                Move(0.0f, 0.0f);
-                other.Move(-intersectX, 0.0f);
+                move(0.0f, 0.0f);
+                other.move(-intersectX, 0.0f);
 
                 direction.x = 1.0f;
                 direction.y = 0.0f;
             } else {
-                Move(0.0f, 0.0f);
-                other.Move(intersectX, 0.0f);
+                move(0.0f, 0.0f);
+                other.move(intersectX, 0.0f);
 
                 direction.x = -1.0f;
                 direction.y = 0.0f;
             }
         } else {
             if (deltaY > 0.0f) {
-                Move(0.0f, 0.0f);
-                other.Move(0.0f, -intersectY);
+                move(0.0f, 0.0f);
+                other.move(0.0f, -intersectY);
 
                 direction.x = 0.0f;
                 direction.y = 1.0f;
             } else {
-                Move(0.0f, 0.0f);
-                other.Move(0.0f, intersectY);
+                move(0.0f, 0.0f);
+                other.move(0.0f, intersectY);
 
                 direction.x = 0.0f;
                 direction.y = -1.0f;
