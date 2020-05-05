@@ -9,7 +9,7 @@
 #include "configuration.hpp"
 
 int main() {
-    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman Maze", sf::Style::Fullscreen);
+    sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman Maze", sf::Style::Close);
     sf::Image icon;
     if (!icon.loadFromFile("../Assets/Images/icon.png")) {
         return EXIT_FAILURE;
