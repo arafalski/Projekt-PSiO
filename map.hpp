@@ -8,6 +8,7 @@
 #include <chrono>
 #include <stack>
 #include "consts.hpp"
+#include "pacman.hpp"
 
 enum class Direction {
     NORTH,
@@ -18,6 +19,7 @@ enum class Direction {
 
 class Cell {
     bool visited = false;
+
 public:
     std::array<std::array<char, 2>, 2> grid{{{'#', '#'}, {'#', ' '}}};
 
@@ -34,10 +36,23 @@ public:
     }
 };
 
-std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
+class Map{
+    std::vector<sf::RectangleShape> mapGrid;
 
-std::vector<std::vector<char>> mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> &maze);
+    void generate();
 
-std::vector<sf::RectangleShape> generateMap();
+    std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
+
+    std::vector<std::vector<char>> mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> &maze);
+
+public:
+    Map();
+
+    ~Map() = default;
+
+    void draw(sf::RenderWindow &window) const;
+
+    void collisionDetection(Pacman &player, bool &endTileHit);
+};
 
 #endif //PROJEKT_MAP_HPP

@@ -1,8 +1,10 @@
 #include "map.hpp"
 
-std::vector<sf::RectangleShape> generateMap() {
-    std::vector<sf::RectangleShape> obstacles;
+Map::Map() {
+    generate();
+}
 
+void Map::generate() {
     std::vector<std::vector<char>> cells = mazeToChar(generateTilesPlacement());
 
     for (std::size_t i = 0; i < cells.size(); i++) {
@@ -14,30 +16,28 @@ std::vector<sf::RectangleShape> generateMap() {
             switch (cells[i][j]) {
                 case '#':
                     box.setFillColor(sf::Color::Blue);
-                    obstacles.emplace_back(box);
+                    mapGrid.emplace_back(box);
                     break;
                 case 's':
                     box.setFillColor(sf::Color::Green);
-                    obstacles.emplace_back(box);
+                    mapGrid.emplace_back(box);
                     break;
                 case 'e':
                     box.setFillColor(sf::Color::Red);
-                    obstacles.emplace_back(box);
+                    mapGrid.emplace_back(box);
                     break;
                 default:
                     box.setFillColor(sf::Color::Yellow);
                     box.setSize(sf::Vector2f(TILE / 4.0f, TILE / 4.0f));
                     box.setOrigin(TILE / 8.0f, TILE / 8.0f);
-                    obstacles.emplace_back(box);
+                    mapGrid.emplace_back(box);
                     break;
             }
         }
     }
-
-    return obstacles;
 }
 
-std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement() {
+std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement() {
     std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> maze{};
     std::stack<std::pair<unsigned int, unsigned int>> backtrack;
     unsigned int visitedCells;
@@ -115,7 +115,7 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement() {
     return maze;
 }
 
-std::vector<std::vector<char>> mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> &maze) {
+std::vector<std::vector<char>> Map::mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> &maze) {
     std::vector<std::vector<char>> cells;
 
     for (auto &row : maze) {
@@ -140,4 +140,27 @@ std::vector<std::vector<char>> mazeToChar(const std::array<std::array<Cell, MAP_
     cells.emplace_back(endingRow);
 
     return cells;
+}
+
+void Map::draw(sf::RenderWindow &window) const {
+    for(const auto &cell : mapGrid){
+        window.draw(cell);
+    }
+}
+
+void Map::collisionDetection(Pacman &player, bool &endTileHit){
+    sf::Vector2f direction;
+    Collider playerCollider = player.getCollider();
+
+    for (auto &box : mapGrid) {
+        if (box.getFillColor() == sf::Color::Blue && Collider(box).checkCollision(playerCollider, direction)) {
+            player.onCollision(direction);
+        } else if (box.getFillColor() == sf::Color::Red &&
+                   box.getGlobalBounds().intersects(player.getGlobalBounds())) {
+            endTileHit = true;
+        } else if (box.getFillColor() == sf::Color::Yellow &&
+                   Collider(box).checkCollision(playerCollider, direction)) {
+            box.setFillColor(sf::Color::Black);
+        }
+    }
 }

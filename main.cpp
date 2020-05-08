@@ -34,7 +34,7 @@ int main() {
     Pacman player(&pacmanTexture, sf::Vector2u(2, 1), 0.15f, 200.0f);
     view.setCenter(player.getPosition());
 
-    std::vector<sf::RectangleShape> obstacles = generateMap();
+    Map tileMap;
 
     mainMenu(window, font);
 
@@ -72,20 +72,8 @@ int main() {
 
         player.update(deltaTime, sf::Vector2f(window.mapPixelToCoords(sf::Mouse::getPosition(window)).x,
                                               window.mapPixelToCoords(sf::Mouse::getPosition(window)).y));
-        sf::Vector2f direction;
-        Collider playerCollider = player.getCollider();
 
-        for (auto &box : obstacles) {
-            if (box.getFillColor() == sf::Color::Blue && Collider(box).checkCollision(playerCollider, direction)) {
-                player.onCollision(direction);
-            } else if (box.getFillColor() == sf::Color::Red &&
-                       box.getGlobalBounds().intersects(player.getGlobalBounds())) {
-                endTileHit = true;
-            } else if (box.getFillColor() == sf::Color::Yellow &&
-                       Collider(box).checkCollision(playerCollider, direction)) {
-                box.setFillColor(sf::Color::Black);
-            }
-        }
+        tileMap.collisionDetection(player, endTileHit);
 
         if (endTileHit) {
             finalScreen(window, icon, font, strPlayingTime);
@@ -95,9 +83,7 @@ int main() {
         timeText.setPosition(player.getPosition().x + 20.0f, player.getPosition().y);
         window.clear();
         window.setView(view);
-        for (auto &box : obstacles) {
-            window.draw(box);
-        }
+        tileMap.draw(window);
         window.draw(player);
         window.draw(timeText);
         window.display();
