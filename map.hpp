@@ -7,43 +7,43 @@
 #include <random>
 #include <chrono>
 #include <stack>
+#include <map>
+#include "cell.hpp"
 #include "consts.hpp"
 #include "pacman.hpp"
 
-enum class Direction {
-    NORTH,
-    SOUTH,
-    EAST,
-    WEST
-};
+class Map {
+    enum class Direction {
+        NORTH,
+        SOUTH,
+        EAST,
+        WEST
+    };
 
-class Cell {
-    bool visited = false;
+    struct Edge {
+        float start_x, start_y;
+        float end_x, end_y;
+    };
 
-public:
-    std::array<std::array<char, 2>, 2> grid{{{'#', '#'}, {'#', ' '}}};
+    struct polyCell {
+        std::map<Direction, std::pair<std::size_t, bool>> edge{{Direction::NORTH, std::make_pair(0, false)},
+                                                       {Direction::SOUTH, std::make_pair(0, false)},
+                                                       {Direction::EAST,  std::make_pair(0, false)},
+                                                       {Direction::WEST,  std::make_pair(0, false)}};
+        bool exist = false;
+    };
 
-    Cell() = default;
-
-    ~Cell() = default;
-
-    void visit() {
-        visited = true;
-    }
-
-    bool wasVisited() const {
-        return visited;
-    }
-};
-
-class Map{
     std::vector<sf::RectangleShape> mapGrid;
+
+    std::vector<Edge> edges;
 
     void generate();
 
     std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
 
     std::vector<std::vector<char>> mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> &maze);
+
+    void convertTileMapToPolyMap(const std::vector<std::vector<char>> &cells);
 
 public:
     Map();

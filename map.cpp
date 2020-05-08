@@ -6,6 +6,7 @@ Map::Map() {
 
 void Map::generate() {
     std::vector<std::vector<char>> cells = mazeToChar(generateTilesPlacement());
+    convertTileMapToPolyMap(cells);
 
     for (std::size_t i = 0; i < cells.size(); i++) {
         for (std::size_t j = 0; j < cells[i].size(); j++) {
@@ -143,12 +144,26 @@ std::vector<std::vector<char>> Map::mazeToChar(const std::array<std::array<Cell,
 }
 
 void Map::draw(sf::RenderWindow &window) const {
-    for(const auto &cell : mapGrid){
+    for (const auto &cell : mapGrid) {
         window.draw(cell);
+    }
+
+    for(const auto &e : edges){
+        sf::CircleShape startPoint(5.0f);
+        startPoint.setPosition(e.start_x, e.start_y);
+        startPoint.setOrigin(startPoint.getRadius(), startPoint.getRadius());
+        startPoint.setFillColor(sf::Color::Red);
+        sf::CircleShape endPoint(5.0f);
+        endPoint.setOrigin(endPoint.getRadius(), endPoint.getRadius());
+        endPoint.setPosition(e.end_x, e.end_y);
+        endPoint.setFillColor(sf::Color::Red);
+
+        window.draw(startPoint);
+        window.draw(endPoint);
     }
 }
 
-void Map::collisionDetection(Pacman &player, bool &endTileHit){
+void Map::collisionDetection(Pacman &player, bool &endTileHit) {
     sf::Vector2f direction;
     Collider playerCollider = player.getCollider();
 
@@ -161,6 +176,113 @@ void Map::collisionDetection(Pacman &player, bool &endTileHit){
         } else if (box.getFillColor() == sf::Color::Yellow &&
                    Collider(box).checkCollision(playerCollider, direction)) {
             box.setFillColor(sf::Color::Black);
+        }
+    }
+}
+
+void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInChars) {
+    std::vector<std::vector<polyCell>> cells;
+
+    for (const auto &row : cellInChars) {
+        std::vector<polyCell> temp;
+        for (const auto &x :row) {
+            polyCell cell;
+            if (x == '#') cell.exist = true;
+            temp.emplace_back(cell);
+        }
+        cells.emplace_back(temp);
+    }
+
+    for (unsigned int i = 1; i < cells.size() - 1; i++) {
+        for (unsigned int j = 1; j < cells[i].size() - 1; j++) {
+
+            if (cells[i][j].exist) {
+                // If cell has no western neighbour
+                if (!cells[i][j - 1].exist) {
+                    // It can extend an edge from its northern neighbour if it has one,
+                    // or it can start a new one
+                    if (cells[i - 1][j].edge[Direction::WEST].second) {
+                        edges[cells[i - 1][j].edge[Direction::WEST].first].end_y += TILE;
+                        cells[i][j].edge[Direction::WEST].first = cells[i - 1][j].edge[Direction::WEST].first;
+                        cells[i][j].edge[Direction::WEST].second = true;
+                    } else {
+                        Edge edge;
+                        edge.start_x = static_cast<float>(j) * TILE - TILE / 2;
+                        edge.start_y = static_cast<float>(i) * TILE - TILE / 2;
+                        edge.end_x = edge.start_x;
+                        edge.end_y = edge.start_y + TILE;
+
+                        std::size_t edgeID = edges.size();
+                        edges.emplace_back(edge);
+
+                        cells[i][j].edge[Direction::WEST].first = edgeID;
+                        cells[i][j].edge[Direction::WEST].second = true;
+                    }
+                }
+
+                // If cell has no eastern neighbour
+                if (!cells[i][j + 1].exist) {
+                    if (cells[i - 1][j].edge[Direction::EAST].second) {
+                        edges[cells[i - 1][j].edge[Direction::EAST].first].end_y += TILE;
+                        cells[i][j].edge[Direction::EAST].first = cells[i - 1][j].edge[Direction::EAST].first;
+                        cells[i][j].edge[Direction::EAST].second = true;
+                    } else {
+                        Edge edge;
+                        edge.start_x = static_cast<float>(j + 1) * TILE - TILE / 2;
+                        edge.start_y = static_cast<float>(i) * TILE - TILE / 2;
+                        edge.end_x = edge.start_x;
+                        edge.end_y = edge.start_y + TILE;
+
+                        std::size_t edgeID = edges.size();
+                        edges.emplace_back(edge);
+
+                        cells[i][j].edge[Direction::EAST].first = edgeID;
+                        cells[i][j].edge[Direction::EAST].second = true;
+                    }
+                }
+
+                // If cell has no northern neighbour
+                if (!cells[i - 1][j].exist) {
+                    if (cells[i][j - 1].edge[Direction::NORTH].second) {
+                        edges[cells[i][j - 1].edge[Direction::NORTH].first].end_x += TILE;
+                        cells[i][j].edge[Direction::NORTH].first = cells[i][j - 1].edge[Direction::NORTH].first;
+                        cells[i][j].edge[Direction::NORTH].second = true;
+                    } else {
+                        Edge edge;
+                        edge.start_x = static_cast<float>(j) * TILE - TILE / 2;
+                        edge.start_y = static_cast<float>(i) * TILE - TILE / 2;
+                        edge.end_x = edge.start_x + TILE;
+                        edge.end_y = edge.start_y;
+
+                        std::size_t edgeID = edges.size();
+                        edges.emplace_back(edge);
+
+                        cells[i][j].edge[Direction::NORTH].first = edgeID;
+                        cells[i][j].edge[Direction::NORTH].second = true;
+                    }
+                }
+
+                // If cell has no southern neighbour
+                if (!cells[i + 1][j].exist) {
+                    if (cells[i][j - 1].edge[Direction::SOUTH].second) {
+                        edges[cells[i][j - 1].edge[Direction::SOUTH].first].end_x += TILE;
+                        cells[i][j].edge[Direction::SOUTH].first = cells[i][j - 1].edge[Direction::SOUTH].first;
+                        cells[i][j].edge[Direction::SOUTH].second = true;
+                    } else {
+                        Edge edge;
+                        edge.start_x = static_cast<float>(j) * TILE - TILE / 2;
+                        edge.start_y = static_cast<float>(i + 1) * TILE - TILE / 2;
+                        edge.end_x = edge.start_x + TILE;
+                        edge.end_y = edge.start_y;
+
+                        std::size_t edgeID = edges.size();
+                        edges.emplace_back(edge);
+
+                        cells[i][j].edge[Direction::SOUTH].first = edgeID;
+                        cells[i][j].edge[Direction::SOUTH].second = true;
+                    }
+                }
+            }
         }
     }
 }
