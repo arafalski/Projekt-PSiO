@@ -288,3 +288,93 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
         }
     }
 }
+
+void Map::checkVisibility(const sf::Vector2f &playerPos, const float &radius) {
+    visiblePolyPoints.clear();
+
+    for (const auto &edge : edges) {
+        for (int i = 0; i < 2; i++) {
+            sf::Vector2f ray((i == 0 ? edge.start_x : edge.end_x) - playerPos.x,
+                             (i == 0 ? edge.start_y : edge.end_y) - playerPos.y);
+
+            float base_angle = atan2f(ray.y, ray.x);
+
+            float angle = 0;
+            for (int j = 0; j < 3; j++) {
+                if (j == 0) angle = base_angle - 0.0001f;
+                if (j == 1) angle = base_angle;
+                if (j == 2) angle = base_angle + 0.0001f;
+
+                ray.x = radius * cosf(angle);
+                ray.y = radius * sinf(angle);
+
+                float min_t1 = INFINITY;
+                sf::Vector2f min_p(0.0f, 0.0f);
+                float min_angle = 0.0f;
+                bool hitSomething = false;
+
+                for (const auto &edge2 : edges) {
+                    sf::Vector2f segment(edge2.end_x - edge2.start_x,
+                                         edge2.end_y - edge2.start_y);
+
+                    if (std::abs(segment.x - ray.x) > 0.0f && std::abs(segment.y - ray.y) > 0.0f) {
+                        float t2 = (ray.x * (edge2.start_y - playerPos.y) + (ray.y * (playerPos.x - edge2.start_x))) /
+                                   (segment.x * ray.y - segment.y * ray.x);
+                        float t1 = (edge2.start_x + segment.x * t2 - playerPos.x) / ray.x;
+
+                        if (t1 > 0.0f && t2 >= 0.0f && t2 <= 1.0f) {
+                            if (t1 < min_t1) {
+                                min_t1 = t1;
+                                min_p.x = playerPos.x + ray.x * t1;
+                                min_p.y = playerPos.y + ray.y * t1;
+                                min_angle = atan2f(min_p.y - playerPos.y, min_p.x - playerPos.x);
+                                hitSomething = true;
+                            }
+                        }
+                    }
+                }
+                if (hitSomething) {
+                    visiblePolyPoints.emplace_back(std::make_pair(min_angle, min_p));
+                }
+            }
+        }
+    }
+    std::sort(visiblePolyPoints.begin(), visiblePolyPoints.end(),
+              [](const std::pair<float, sf::Vector2f> &p1, const std::pair<float, sf::Vector2f> &p2) {
+                  return p1.first < p2.first;
+              });
+}
+
+void Map::drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window) {
+    std::vector<sf::VertexArray> lightTriangles;
+
+    if (visiblePolyPoints.size() > 1) {
+        for (std::size_t i = 0; i < visiblePolyPoints.size() - 1; i++) {
+            sf::VertexArray triangle(sf::Triangles, 3);
+
+            triangle[0].position = playerPos;
+            triangle[1].position = visiblePolyPoints[i].second;
+            triangle[2].position = visiblePolyPoints[i + 1].second;
+
+            triangle[0].color = sf::Color::Green;
+            triangle[1].color = sf::Color::Green;
+            triangle[2].color = sf::Color::Green;
+
+            lightTriangles.emplace_back(triangle);
+        }
+        sf::VertexArray lastTriangle(sf::Triangles, 3);
+        lastTriangle[0].position = playerPos;
+        lastTriangle[1].position = visiblePolyPoints[visiblePolyPoints.size() - 1].second;
+        lastTriangle[2].position = visiblePolyPoints[0].second;
+
+        lastTriangle[0].color = sf::Color::Green;
+        lastTriangle[1].color = sf::Color::Green;
+        lastTriangle[2].color = sf::Color::Green;
+
+        lightTriangles.emplace_back(lastTriangle);
+    }
+
+    for (const auto &triangle : lightTriangles) {
+        window.draw(triangle);
+    }
+}

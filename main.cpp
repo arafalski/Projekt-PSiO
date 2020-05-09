@@ -79,11 +79,14 @@ int main() {
             finalScreen(window, icon, font, strPlayingTime);
         }
 
+        tileMap.checkVisibility(player.getPosition(), 1000.0f);
+
         view.setCenter(player.getPosition());
         timeText.setPosition(player.getPosition().x + 20.0f, player.getPosition().y);
         window.clear();
         window.setView(view);
         tileMap.draw(window);
+        tileMap.drawLight(player.getPosition(), window);
         window.draw(player);
         window.draw(timeText);
         window.display();

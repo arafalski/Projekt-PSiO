@@ -10,6 +10,7 @@
 #include <map>
 #include <thread>
 #include <mutex>
+#include <algorithm>
 #include "cell.hpp"
 #include "consts.hpp"
 #include "pacman.hpp"
@@ -39,6 +40,8 @@ class Map {
 
     std::vector<Edge> edges;
 
+    std::vector<std::pair<float, sf::Vector2f>> visiblePolyPoints; //angle, x, y
+
     void generate();
 
     std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
@@ -55,6 +58,10 @@ public:
     void draw(sf::RenderWindow &window) const;
 
     void collisionDetection(Pacman &player, bool &endTileHit);
+
+    void checkVisibility(const sf::Vector2f &playerPos, const float &radius);
+
+    void drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window);
 };
 
 #endif //PROJEKT_MAP_HPP
