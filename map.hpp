@@ -8,6 +8,8 @@
 #include <chrono>
 #include <stack>
 #include <map>
+#include <thread>
+#include <mutex>
 #include "cell.hpp"
 #include "consts.hpp"
 #include "pacman.hpp"

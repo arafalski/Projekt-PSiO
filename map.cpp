@@ -6,7 +6,7 @@ Map::Map() {
 
 void Map::generate() {
     std::vector<std::vector<char>> cells = mazeToChar(generateTilesPlacement());
-    convertTileMapToPolyMap(cells);
+    std::thread convToPolyThread(&Map::convertTileMapToPolyMap, this, cells);
 
     for (std::size_t i = 0; i < cells.size(); i++) {
         for (std::size_t j = 0; j < cells[i].size(); j++) {
@@ -36,6 +36,7 @@ void Map::generate() {
             }
         }
     }
+    convToPolyThread.join();
 }
 
 std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement() {
@@ -148,7 +149,7 @@ void Map::draw(sf::RenderWindow &window) const {
         window.draw(cell);
     }
 
-    for(const auto &e : edges){
+    for (const auto &e : edges) {
         sf::CircleShape startPoint(5.0f);
         startPoint.setPosition(e.start_x, e.start_y);
         startPoint.setOrigin(startPoint.getRadius(), startPoint.getRadius());
@@ -170,8 +171,7 @@ void Map::collisionDetection(Pacman &player, bool &endTileHit) {
     for (auto &box : mapGrid) {
         if (box.getFillColor() == sf::Color::Blue && Collider(box).checkCollision(playerCollider, direction)) {
             player.onCollision(direction);
-        } else if (box.getFillColor() == sf::Color::Red &&
-                   box.getGlobalBounds().intersects(player.getGlobalBounds())) {
+        } else if (box.getFillColor() == sf::Color::Red && box.getGlobalBounds().intersects(player.getGlobalBounds())) {
             endTileHit = true;
         } else if (box.getFillColor() == sf::Color::Yellow &&
                    Collider(box).checkCollision(playerCollider, direction)) {
@@ -181,6 +181,8 @@ void Map::collisionDetection(Pacman &player, bool &endTileHit) {
 }
 
 void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInChars) {
+    std::mutex m;
+    const std::lock_guard<std::mutex> lock(m);
     std::vector<std::vector<polyCell>> cells;
 
     for (const auto &row : cellInChars) {
