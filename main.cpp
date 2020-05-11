@@ -79,7 +79,7 @@ int main() {
             finalScreen(window, icon, font, strPlayingTime);
         }
 
-        tileMap.checkVisibility(player.getPosition(), 1000.0f);
+        tileMap.checkVisibility(player.getPosition());
 
         view.setCenter(player.getPosition());
         timeText.setPosition(player.getPosition().x + 20.0f, player.getPosition().y);

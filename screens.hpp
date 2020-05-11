@@ -88,7 +88,7 @@ finalScreen(sf::RenderWindow &window, const sf::Image &icon, const sf::Font &fon
     auto topTimes = leaderboard.getBestTimes();
 
     std::string bestTimes = "Best times:\n";
-    for(auto &time : topTimes){
+    for (auto &time : topTimes) {
         std::string strTime = std::to_string(time);
         bestTimes += strTime.substr(0, strTime.find('.') + 3);
         bestTimes += "s\n";

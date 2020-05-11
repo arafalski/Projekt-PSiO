@@ -10,6 +10,7 @@ class Leaderboard {
     std::vector<float> bestTimes;
 public:
     explicit Leaderboard(const std::string &strPlayingTime);
+
     std::vector<float> getBestTimes() const;
 };
 

@@ -24,15 +24,15 @@ class Map {
     };
 
     struct Edge {
-        float start_x, start_y;
-        float end_x, end_y;
+        sf::Vector2f start;
+        sf::Vector2f end;
     };
 
     struct polyCell {
         std::map<Direction, std::pair<std::size_t, bool>> edge{{Direction::NORTH, std::make_pair(0, false)},
-                                                       {Direction::SOUTH, std::make_pair(0, false)},
-                                                       {Direction::EAST,  std::make_pair(0, false)},
-                                                       {Direction::WEST,  std::make_pair(0, false)}};
+                                                               {Direction::SOUTH, std::make_pair(0, false)},
+                                                               {Direction::EAST,  std::make_pair(0, false)},
+                                                               {Direction::WEST,  std::make_pair(0, false)}};
         bool exist = false;
     };
 
@@ -50,6 +50,8 @@ class Map {
 
     void convertTileMapToPolyMap(const std::vector<std::vector<char>> &cells);
 
+    void addPolyMapBoundary();
+
 public:
     Map();
 
@@ -59,7 +61,7 @@ public:
 
     void collisionDetection(Pacman &player, bool &endTileHit);
 
-    void checkVisibility(const sf::Vector2f &playerPos, const float &radius);
+    void checkVisibility(const sf::Vector2f &playerPos);
 
     void drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window);
 };
