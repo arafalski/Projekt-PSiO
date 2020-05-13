@@ -360,16 +360,15 @@ void Map::checkVisibility(const sf::Vector2f &playerPos) {
               [](const std::pair<float, sf::Vector2f> &p1, const std::pair<float, sf::Vector2f> &p2) {
                   return p1.first < p2.first;
               });
-}
-
-void Map::drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window) {
     auto it = std::unique(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(),
                           [](const std::pair<float, sf::Vector2f> &p1, const std::pair<float, sf::Vector2f> &p2) {
                               return std::abs(p1.second.x - p2.second.x) < 0.1f &&
                                      std::abs(p1.second.y - p2.second.y) < 0.1f;
                           });
     m_visiblePolyPoints.erase(it, m_visiblePolyPoints.end());
+}
 
+void Map::drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window) {
     std::vector<sf::VertexArray> lightTriangles;
 
     sf::Color lightColor(255, 202, 3, 80);
