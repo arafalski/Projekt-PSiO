@@ -1,9 +1,9 @@
 #include "collider.hpp"
 
-Collider::Collider(sf::RectangleShape &body) : body(body) {}
+Collider::Collider(sf::RectangleShape &body) : m_body(body) {}
 
 void Collider::move(const float &dx, const float &dy) {
-    body.move(dx, dy);
+    m_body.move(dx, dy);
 }
 
 bool Collider::checkCollision(Collider &other, sf::Vector2f &direction) {
@@ -56,9 +56,9 @@ bool Collider::checkCollision(Collider &other, sf::Vector2f &direction) {
 }
 
 sf::Vector2f Collider::getPosition() const {
-    return body.getPosition();
+    return m_body.getPosition();
 }
 
 sf::Vector2f Collider::getHalfSize() const {
-    return body.getSize() / 2.0f;
+    return m_body.getSize() / 2.0f;
 }

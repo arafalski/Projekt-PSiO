@@ -8,10 +8,9 @@
 #include "collider.hpp"
 
 class Pacman : public sf::RectangleShape {
-    float speed;
-    sf::Vector2f velocity;
-    Animation animation;
-    unsigned int rowOfTexture = 0;
+    float m_speed;
+    sf::Vector2f m_velocity;
+    Animation m_animation;
 public:
     Pacman(sf::Texture *pacmanTexture, const sf::Vector2u &imageCount, const float &switchTime, const float &speed);
 

@@ -7,7 +7,7 @@
 #include <algorithm>
 
 class Leaderboard {
-    std::vector<float> bestTimes;
+    std::vector<float> m_bestTimes;
 public:
     explicit Leaderboard(const std::string &strPlayingTime);
 

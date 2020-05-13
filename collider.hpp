@@ -5,7 +5,7 @@
 #include <cmath>
 
 class Collider {
-    sf::RectangleShape &body;
+    sf::RectangleShape &m_body;
 
 public:
     explicit Collider(sf::RectangleShape &body);

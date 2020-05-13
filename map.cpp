@@ -17,21 +17,21 @@ void Map::generate() {
             switch (cells[i][j]) {
                 case '#':
                     box.setFillColor(sf::Color::Blue);
-                    mapGrid.emplace_back(box);
+                    m_mapGrid.emplace_back(box);
                     break;
                 case 's':
                     box.setFillColor(sf::Color::Green);
-                    mapGrid.emplace_back(box);
+                    m_mapGrid.emplace_back(box);
                     break;
                 case 'e':
                     box.setFillColor(sf::Color::Red);
-                    mapGrid.emplace_back(box);
+                    m_mapGrid.emplace_back(box);
                     break;
                 default:
                     box.setFillColor(sf::Color::Yellow);
                     box.setSize(sf::Vector2f(TILE / 4.0f, TILE / 4.0f));
                     box.setOrigin(TILE / 8.0f, TILE / 8.0f);
-                    mapGrid.emplace_back(box);
+                    m_mapGrid.emplace_back(box);
                     break;
             }
         }
@@ -145,7 +145,7 @@ std::vector<std::vector<char>> Map::mazeToChar(const std::array<std::array<Cell,
 }
 
 void Map::draw(sf::RenderWindow &window) const {
-    for (const auto &cell : mapGrid) {
+    for (const auto &cell : m_mapGrid) {
         window.draw(cell);
     }
 }
@@ -154,7 +154,7 @@ void Map::collisionDetection(Pacman &player, bool &endTileHit) {
     sf::Vector2f direction;
     Collider playerCollider = player.getCollider();
 
-    for (auto &box : mapGrid) {
+    for (auto &box : m_mapGrid) {
         if (box.getFillColor() == sf::Color::Blue && Collider(box).checkCollision(playerCollider, direction)) {
             player.onCollision(direction);
         } else if (box.getFillColor() == sf::Color::Red && box.getGlobalBounds().intersects(player.getGlobalBounds())) {
@@ -189,10 +189,10 @@ void Map::addPolyMapBoundary() {
     Left.end.x = Left.start.x;
     Left.end.y = Left.start.y - 2 * TILE * (MAP_HEIGHT - 0.5f);
 
-    edges.emplace_back(Top);
-    edges.emplace_back(Right);
-    edges.emplace_back(Bottom);
-    edges.emplace_back(Left);
+    m_edges.emplace_back(Top);
+    m_edges.emplace_back(Right);
+    m_edges.emplace_back(Bottom);
+    m_edges.emplace_back(Left);
 }
 
 void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInChars) {
@@ -221,7 +221,7 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
                     // It can extend an edge from its northern neighbour if it has one,
                     // or it can start a new one
                     if (cells[i - 1][j].edge[Direction::WEST].second) {
-                        edges[cells[i - 1][j].edge[Direction::WEST].first].end.y += TILE;
+                        m_edges[cells[i - 1][j].edge[Direction::WEST].first].end.y += TILE;
                         cells[i][j].edge[Direction::WEST].first = cells[i - 1][j].edge[Direction::WEST].first;
                         cells[i][j].edge[Direction::WEST].second = true;
                     } else {
@@ -231,8 +231,8 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
                         edge.end.x = edge.start.x;
                         edge.end.y = edge.start.y + TILE;
 
-                        std::size_t edgeID = edges.size();
-                        edges.emplace_back(edge);
+                        std::size_t edgeID = m_edges.size();
+                        m_edges.emplace_back(edge);
 
                         cells[i][j].edge[Direction::WEST].first = edgeID;
                         cells[i][j].edge[Direction::WEST].second = true;
@@ -242,7 +242,7 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
                 // If cell has no eastern neighbour
                 if (!cells[i][j + 1].exist) {
                     if (cells[i - 1][j].edge[Direction::EAST].second) {
-                        edges[cells[i - 1][j].edge[Direction::EAST].first].end.y += TILE;
+                        m_edges[cells[i - 1][j].edge[Direction::EAST].first].end.y += TILE;
                         cells[i][j].edge[Direction::EAST].first = cells[i - 1][j].edge[Direction::EAST].first;
                         cells[i][j].edge[Direction::EAST].second = true;
                     } else {
@@ -252,8 +252,8 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
                         edge.end.x = edge.start.x;
                         edge.end.y = edge.start.y + TILE;
 
-                        std::size_t edgeID = edges.size();
-                        edges.emplace_back(edge);
+                        std::size_t edgeID = m_edges.size();
+                        m_edges.emplace_back(edge);
 
                         cells[i][j].edge[Direction::EAST].first = edgeID;
                         cells[i][j].edge[Direction::EAST].second = true;
@@ -263,7 +263,7 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
                 // If cell has no northern neighbour
                 if (!cells[i - 1][j].exist) {
                     if (cells[i][j - 1].edge[Direction::NORTH].second) {
-                        edges[cells[i][j - 1].edge[Direction::NORTH].first].end.x += TILE;
+                        m_edges[cells[i][j - 1].edge[Direction::NORTH].first].end.x += TILE;
                         cells[i][j].edge[Direction::NORTH].first = cells[i][j - 1].edge[Direction::NORTH].first;
                         cells[i][j].edge[Direction::NORTH].second = true;
                     } else {
@@ -273,8 +273,8 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
                         edge.end.x = edge.start.x + TILE;
                         edge.end.y = edge.start.y;
 
-                        std::size_t edgeID = edges.size();
-                        edges.emplace_back(edge);
+                        std::size_t edgeID = m_edges.size();
+                        m_edges.emplace_back(edge);
 
                         cells[i][j].edge[Direction::NORTH].first = edgeID;
                         cells[i][j].edge[Direction::NORTH].second = true;
@@ -284,7 +284,7 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
                 // If cell has no southern neighbour
                 if (!cells[i + 1][j].exist) {
                     if (cells[i][j - 1].edge[Direction::SOUTH].second) {
-                        edges[cells[i][j - 1].edge[Direction::SOUTH].first].end.x += TILE;
+                        m_edges[cells[i][j - 1].edge[Direction::SOUTH].first].end.x += TILE;
                         cells[i][j].edge[Direction::SOUTH].first = cells[i][j - 1].edge[Direction::SOUTH].first;
                         cells[i][j].edge[Direction::SOUTH].second = true;
                     } else {
@@ -294,8 +294,8 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
                         edge.end.x = edge.start.x + TILE;
                         edge.end.y = edge.start.y;
 
-                        std::size_t edgeID = edges.size();
-                        edges.emplace_back(edge);
+                        std::size_t edgeID = m_edges.size();
+                        m_edges.emplace_back(edge);
 
                         cells[i][j].edge[Direction::SOUTH].first = edgeID;
                         cells[i][j].edge[Direction::SOUTH].second = true;
@@ -307,9 +307,9 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
 }
 
 void Map::checkVisibility(const sf::Vector2f &playerPos) {
-    visiblePolyPoints.clear();
+    m_visiblePolyPoints.clear();
 
-    for (const auto &edge : edges) {
+    for (const auto &edge : m_edges) {
         for (int i = 0; i < 2; i++) {
             sf::Vector2f ray((i == 0 ? edge.start.x : edge.end.x) - playerPos.x,
                              (i == 0 ? edge.start.y : edge.end.y) - playerPos.y);
@@ -330,7 +330,7 @@ void Map::checkVisibility(const sf::Vector2f &playerPos) {
                 float rayAngle = 0.0f;
                 bool hitSomething = false;
 
-                for (const auto &edge2 : edges) {
+                for (const auto &edge2 : m_edges) {
                     sf::Vector2f segment(edge2.end.x - edge2.start.x,
                                          edge2.end.y - edge2.start.y);
 
@@ -351,36 +351,36 @@ void Map::checkVisibility(const sf::Vector2f &playerPos) {
                     }
                 }
                 if (hitSomething) {
-                    visiblePolyPoints.emplace_back(std::make_pair(rayAngle, rayEndPoint));
+                    m_visiblePolyPoints.emplace_back(std::make_pair(rayAngle, rayEndPoint));
                 }
             }
         }
     }
-    std::sort(visiblePolyPoints.begin(), visiblePolyPoints.end(),
+    std::sort(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(),
               [](const std::pair<float, sf::Vector2f> &p1, const std::pair<float, sf::Vector2f> &p2) {
                   return p1.first < p2.first;
               });
 }
 
 void Map::drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window) {
-    auto it = std::unique(visiblePolyPoints.begin(), visiblePolyPoints.end(),
+    auto it = std::unique(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(),
                           [](const std::pair<float, sf::Vector2f> &p1, const std::pair<float, sf::Vector2f> &p2) {
                               return std::abs(p1.second.x - p2.second.x) < 0.1f &&
                                      std::abs(p1.second.y - p2.second.y) < 0.1f;
                           });
-    visiblePolyPoints.erase(it, visiblePolyPoints.end());
+    m_visiblePolyPoints.erase(it, m_visiblePolyPoints.end());
 
     std::vector<sf::VertexArray> lightTriangles;
 
     sf::Color lightColor(255, 202, 3, 80);
 
-    if (visiblePolyPoints.size() > 1) {
-        for (std::size_t i = 0; i < visiblePolyPoints.size() - 1; i++) {
+    if (m_visiblePolyPoints.size() > 1) {
+        for (std::size_t i = 0; i < m_visiblePolyPoints.size() - 1; i++) {
             sf::VertexArray triangle(sf::Triangles, 3);
 
             triangle[0].position = playerPos;
-            triangle[1].position = visiblePolyPoints[i].second;
-            triangle[2].position = visiblePolyPoints[i + 1].second;
+            triangle[1].position = m_visiblePolyPoints[i].second;
+            triangle[2].position = m_visiblePolyPoints[i + 1].second;
 
             triangle[0].color = lightColor;
             triangle[1].color = lightColor;
@@ -390,8 +390,8 @@ void Map::drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window) {
         }
         sf::VertexArray lastTriangle(sf::Triangles, 3);
         lastTriangle[0].position = playerPos;
-        lastTriangle[1].position = visiblePolyPoints[visiblePolyPoints.size() - 1].second;
-        lastTriangle[2].position = visiblePolyPoints[0].second;
+        lastTriangle[1].position = m_visiblePolyPoints[m_visiblePolyPoints.size() - 1].second;
+        lastTriangle[2].position = m_visiblePolyPoints[0].second;
 
         lastTriangle[0].color = lightColor;
         lastTriangle[1].color = lightColor;

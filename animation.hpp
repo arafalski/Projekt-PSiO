@@ -4,11 +4,11 @@
 #include <SFML/Graphics.hpp>
 
 class Animation {
-    sf::Vector2u imageCount;
-    sf::Vector2u currentImage;
+    sf::Vector2u m_imageCount;
+    sf::Vector2u m_currentImage;
 
-    float totalTime;
-    float switchTime;
+    float m_totalTime;
+    float m_switchTime;
 public:
     sf::IntRect uvRect;
 

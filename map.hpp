@@ -36,11 +36,11 @@ class Map {
         bool exist = false;
     };
 
-    std::vector<sf::RectangleShape> mapGrid;
+    std::vector<sf::RectangleShape> m_mapGrid;
 
-    std::vector<Edge> edges;
+    std::vector<Edge> m_edges;
 
-    std::vector<std::pair<float, sf::Vector2f>> visiblePolyPoints; //angle, x, y
+    std::vector<std::pair<float, sf::Vector2f>> m_visiblePolyPoints; //angle, x, y
 
     void generate();
 
