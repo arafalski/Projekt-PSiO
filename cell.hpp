@@ -4,8 +4,6 @@
 #include <array>
 
 class Cell {
-    bool visited = false;
-
 public:
     std::array<std::array<char, 2>, 2> grid{{{'#', '#'}, {'#', ' '}}};
 
@@ -20,6 +18,9 @@ public:
     bool wasVisited() const {
         return visited;
     }
+
+private:
+    bool visited = false;
 };
 
 #endif //PROJEKT_CELL_HPP

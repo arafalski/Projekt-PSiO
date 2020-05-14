@@ -16,6 +16,20 @@
 #include "pacman.hpp"
 
 class Map {
+public:
+    Map();
+
+    ~Map() = default;
+
+    void draw(sf::RenderWindow &window) const;
+
+    void collisionDetection(Pacman &player, bool &endTileHit);
+
+    void checkVisibility(const sf::Vector2f &playerPos);
+
+    void drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window);
+
+private:
     enum class Direction {
         NORTH,
         SOUTH,
@@ -52,18 +66,7 @@ class Map {
 
     void addPolyMapBoundary();
 
-public:
-    Map();
-
-    ~Map() = default;
-
-    void draw(sf::RenderWindow &window) const;
-
-    void collisionDetection(Pacman &player, bool &endTileHit);
-
-    void checkVisibility(const sf::Vector2f &playerPos);
-
-    void drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window);
+    void sortAndEraseDuplicatesVisiblePoints();
 };
 
 #endif //PROJEKT_MAP_HPP

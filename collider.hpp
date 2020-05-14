@@ -5,8 +5,6 @@
 #include <cmath>
 
 class Collider {
-    sf::RectangleShape &m_body;
-
 public:
     explicit Collider(sf::RectangleShape &body);
 
@@ -19,6 +17,9 @@ public:
     sf::Vector2f getPosition() const;
 
     sf::Vector2f getHalfSize() const;
+
+private:
+    sf::RectangleShape &m_body;
 };
 
 #endif //PROJEKT_COLLIDER_HPP
