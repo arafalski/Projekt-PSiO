@@ -48,7 +48,19 @@ int main() {
 
     // game loop
     while (window.isOpen()) {
-        deltaTime = clock.restart().asSeconds();
+
+        // Checking if cursor is inside the window
+        if (window.hasFocus() &&
+            sf::Mouse::getPosition(window).y > 0 &&
+            sf::Mouse::getPosition(window).y < static_cast<int>(WINDOW_HEIGHT) &&
+            sf::Mouse::getPosition(window).x > 0 &&
+            sf::Mouse::getPosition(window).x < static_cast<int>(WINDOW_WIDTH)) {
+            deltaTime = clock.restart().asSeconds();
+        } else {
+            clock.restart();
+            deltaTime = 0.0f;
+        }
+
         if (!endTileHit) {
             playingTime += deltaTime;
         }
