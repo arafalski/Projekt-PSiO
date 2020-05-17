@@ -1,10 +1,6 @@
 #include "map.hpp"
 
 Map::Map() {
-    generate();
-}
-
-void Map::generate() {
     std::vector<std::vector<char>> cells = mazeToChar(generateTilesPlacement());
     std::thread convToPolyThread(&Map::convertTileMapToPolyMap, this, cells);
 

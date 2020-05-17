@@ -56,8 +56,6 @@ private:
 
     std::vector<std::pair<float, sf::Vector2f>> m_visiblePolyPoints; //angle, x, y
 
-    void generate();
-
     std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
 
     std::vector<std::vector<char>> mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> &maze);
