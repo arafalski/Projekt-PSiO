@@ -133,7 +133,7 @@ std::vector<std::vector<char>> Map::mazeToChar(const std::array<std::array<Cell,
 
 void Map::draw(sf::RenderWindow &window) const {
     for (const auto &cell : m_mapGrid) {
-        window.draw(cell);
+        cell.drawSprite(window);
     }
 }
 

@@ -13,8 +13,12 @@ public:
 
     char getFunction() const;
 
+    void drawSprite(sf::RenderWindow &window) const;
+
 private:
     char m_function;
+
+    sf::Sprite m_tileSprite;
 };
 
 

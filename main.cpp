@@ -38,21 +38,22 @@ int main() {
     try {
         textureLoading(pacmanTexture, "../Assets/Images/pacman.png");
         textureLoading(wallTexture, "../Assets/Images/grayTile.png");
+        wallTexture.setRepeated(true);
         textureLoading(startTexture, "../Assets/Images/greenTile.png");
         textureLoading(endTexture, "../Assets/Images/redTile.png");
         textureLoading(pointTexture, "../Assets/Images/yellowTile.png");
         textureLoading(backgroundTexture, "../Assets/Images/darkGrayTile.png");
+        backgroundTexture.setRepeated(true);
     }
     catch (std::invalid_argument &except) {
         std::cerr << except.what() << '\n';
         return EXIT_FAILURE;
     }
 
-    backgroundTexture.setRepeated(true);
     sf::Sprite background;
     background.setTexture(backgroundTexture);
     background.setTextureRect(
-            sf::IntRect(0, 0, static_cast<int>(4 * MAP_WIDTH * TILE), static_cast<int>(4 * MAP_HEIGHT * TILE)));
+            sf::IntRect(0, 0, static_cast<int>(2 * MAP_WIDTH * TILE), static_cast<int>(2 * MAP_HEIGHT * TILE)));
 
     Pacman player(&pacmanTexture, sf::Vector2u(2, 1), 0.15f, 200.0f);
     view.setCenter(player.getPosition());
