@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
+#include <map>
 #include <string>
 #include "pacman.hpp"
 #include "consts.hpp"
@@ -29,21 +30,10 @@ int main() {
     sf::Text timeText;
     textConfig(timeText, font, "Time: 00.00s", 20, sf::Color(255, 102, 0));
 
-    sf::Texture pacmanTexture;
-    sf::Texture wallTexture;
-    sf::Texture startTexture;
-    sf::Texture endTexture;
-    sf::Texture pointTexture;
-    sf::Texture backgroundTexture;
+    std::map<std::string, sf::Texture> textures;
+
     try {
-        textureLoading(pacmanTexture, "../Assets/Images/pacman.png");
-        textureLoading(wallTexture, "../Assets/Images/grayTile.png");
-        wallTexture.setRepeated(true);
-        textureLoading(startTexture, "../Assets/Images/greenTile.png");
-        textureLoading(endTexture, "../Assets/Images/redTile.png");
-        textureLoading(pointTexture, "../Assets/Images/yellowTile.png");
-        textureLoading(backgroundTexture, "../Assets/Images/darkGrayTile.png");
-        backgroundTexture.setRepeated(true);
+        loadTextures(textures);
     }
     catch (std::invalid_argument &except) {
         std::cerr << except.what() << '\n';
@@ -51,21 +41,21 @@ int main() {
     }
 
     sf::Sprite background;
-    background.setTexture(backgroundTexture);
+    background.setTexture(textures.at("background"));
     background.setTextureRect(
             sf::IntRect(0, 0, static_cast<int>(2 * MAP_WIDTH * TILE), static_cast<int>(2 * MAP_HEIGHT * TILE)));
 
-    Pacman player(&pacmanTexture, sf::Vector2u(2, 1), 0.15f, 200.0f);
+    Pacman player(&textures.at("pacman"), sf::Vector2u(2, 1), 0.15f, 200.0f);
     view.setCenter(player.getPosition());
 
-    Map tileMap(wallTexture, startTexture, endTexture, pointTexture);
+    Map tileMap(textures.at("wall"), textures.at("start"), textures.at("end"), textures.at("point"));
 
     mainMenu(window, font);
 
     sf::Mouse::setPosition(sf::Vector2i(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), window);
 
     sf::Clock clock;
-    float deltaTime = 0;
+    float deltaTime;
     float playingTime = 0;
     unsigned int counter = 1;
     bool endTileHit = false;
