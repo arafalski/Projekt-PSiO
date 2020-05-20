@@ -14,10 +14,11 @@
 #include "cell.hpp"
 #include "consts.hpp"
 #include "pacman.hpp"
+#include "tile.hpp"
 
 class Map {
 public:
-    Map();
+    Map(sf::Texture &wallTexture, sf::Texture &startTexture, sf::Texture &endTexture, sf::Texture &pointTexture);
 
     ~Map() = default;
 
@@ -50,7 +51,7 @@ private:
         bool exist = false;
     };
 
-    std::vector<sf::RectangleShape> m_mapGrid;
+    std::vector<Tile> m_mapGrid;
 
     std::vector<Edge> m_edges;
 
