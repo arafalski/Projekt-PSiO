@@ -28,13 +28,26 @@ int main() {
     textConfig(timeText, font, "Time: 00.00s", 20, sf::Color(255, 102, 0));
 
     sf::Texture pacmanTexture;
-    if (!pacmanTexture.loadFromFile("../Assets/Images/pacman.png")) {
+    sf::Texture wallTexture;
+    sf::Texture startTexture;
+    sf::Texture endTexture;
+    sf::Texture pointTexture;
+    try {
+        textureLoading(pacmanTexture, "../Assets/Images/pacman.png");
+        textureLoading(wallTexture, "../Assets/Images/grayTile.png");
+        textureLoading(startTexture, "../Assets/Images/greenTile.png");
+        textureLoading(endTexture, "../Assets/Images/redTile.png");
+        textureLoading(pointTexture, "../Assets/Images/yellowTile.png");
+    }
+    catch (std::invalid_argument &except) {
+        std::cerr << except.what() << '\n';
         return EXIT_FAILURE;
     }
+
     Pacman player(&pacmanTexture, sf::Vector2u(2, 1), 0.15f, 200.0f);
     view.setCenter(player.getPosition());
 
-    Map tileMap;
+    Map tileMap(wallTexture, startTexture, endTexture, pointTexture);
 
     mainMenu(window, font);
 

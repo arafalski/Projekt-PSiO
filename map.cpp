@@ -1,34 +1,25 @@
 #include "map.hpp"
 
-Map::Map() {
+Map::Map(sf::Texture &wallTexture, sf::Texture &startTexture, sf::Texture &endTexture, sf::Texture &pointTexture) {
     std::vector<std::vector<char>> cells = mazeToChar(generateTilesPlacement());
     std::thread convToPolyThread(&Map::convertTileMapToPolyMap, this, cells);
 
     for (std::size_t i = 0; i < cells.size(); i++) {
         for (std::size_t j = 0; j < cells[i].size(); j++) {
-            sf::RectangleShape box;
-            box.setSize(sf::Vector2f(TILE, TILE));
-            box.setPosition(static_cast<float>(j) * TILE, static_cast<float>(i) * TILE);
-            box.setOrigin(TILE / 2.0f, TILE / 2.0f);
+
+            sf::Vector2f position(static_cast<float>(j) * TILE, static_cast<float>(i) * TILE);
             switch (cells[i][j]) {
                 case '#':
-                    box.setFillColor(sf::Color::Blue);
-                    m_mapGrid.emplace_back(box);
+                    m_mapGrid.emplace_back(Tile(wallTexture, '#', position));
                     break;
                 case 's':
-                    box.setFillColor(sf::Color::Green);
-                    m_mapGrid.emplace_back(box);
+                    m_mapGrid.emplace_back(Tile(startTexture, 's', position));
                     break;
                 case 'e':
-                    box.setFillColor(sf::Color::Red);
-                    m_mapGrid.emplace_back(box);
+                    m_mapGrid.emplace_back(Tile(endTexture, 'e', position));
                     break;
                 default:
-                    box.setFillColor(sf::Color::Yellow);
-                    box.setSize(sf::Vector2f(TILE / 4.0f, TILE / 4.0f));
-                    box.setOrigin(TILE / 8.0f, TILE / 8.0f);
-                    m_mapGrid.emplace_back(box);
-                    break;
+                    m_mapGrid.emplace_back(Tile(pointTexture, 'p', position));
             }
         }
     }
@@ -150,15 +141,23 @@ void Map::collisionDetection(Pacman &player, bool &endTileHit) {
     sf::Vector2f direction;
     Collider playerCollider = player.getCollider();
 
-    for (auto &box : m_mapGrid) {
-        if (box.getFillColor() == sf::Color::Blue && Collider(box).checkCollision(playerCollider, direction)) {
+    auto hitPointIt = m_mapGrid.end();
+    for (std::size_t i = 0; i < m_mapGrid.size(); i++) {
+        Collider boxCollider = m_mapGrid[i].getCollider();
+
+        if (m_mapGrid[i].getFunction() == '#' && boxCollider.checkCollision(playerCollider, direction)) {
             player.onCollision(direction);
-        } else if (box.getFillColor() == sf::Color::Red && box.getGlobalBounds().intersects(player.getGlobalBounds())) {
+        } else if (m_mapGrid[i].getFunction() == 'e' &&
+                   m_mapGrid[i].getGlobalBounds().intersects(player.getGlobalBounds())) {
             endTileHit = true;
-        } else if (box.getFillColor() == sf::Color::Yellow &&
-                   Collider(box).checkCollision(playerCollider, direction)) {
-            box.setFillColor(sf::Color::Black);
+        } else if (m_mapGrid[i].getFunction() == 'p' &&
+                   m_mapGrid[i].getGlobalBounds().intersects(player.getGlobalBounds())) {
+            hitPointIt = std::next(m_mapGrid.begin(), static_cast<int>(i));
         }
+    }
+
+    if (hitPointIt != m_mapGrid.end()) {
+        m_mapGrid.erase(hitPointIt);
     }
 }
 
@@ -212,10 +211,7 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
         for (unsigned int j = 1; j < cells[i].size() - 1; j++) {
 
             if (cells[i][j].exist) {
-                // If cell has no western neighbour
                 if (!cells[i][j - 1].exist) {
-                    // It can extend an edge from its northern neighbour if it has one,
-                    // or it can start a new one
                     if (cells[i - 1][j].edge[Direction::WEST].second) {
                         m_edges[cells[i - 1][j].edge[Direction::WEST].first].end.y += TILE;
                         cells[i][j].edge[Direction::WEST].first = cells[i - 1][j].edge[Direction::WEST].first;
@@ -235,7 +231,6 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
                     }
                 }
 
-                // If cell has no eastern neighbour
                 if (!cells[i][j + 1].exist) {
                     if (cells[i - 1][j].edge[Direction::EAST].second) {
                         m_edges[cells[i - 1][j].edge[Direction::EAST].first].end.y += TILE;
@@ -256,7 +251,6 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
                     }
                 }
 
-                // If cell has no northern neighbour
                 if (!cells[i - 1][j].exist) {
                     if (cells[i][j - 1].edge[Direction::NORTH].second) {
                         m_edges[cells[i][j - 1].edge[Direction::NORTH].first].end.x += TILE;
@@ -277,7 +271,6 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
                     }
                 }
 
-                // If cell has no southern neighbour
                 if (!cells[i + 1][j].exist) {
                     if (cells[i][j - 1].edge[Direction::SOUTH].second) {
                         m_edges[cells[i][j - 1].edge[Direction::SOUTH].first].end.x += TILE;
