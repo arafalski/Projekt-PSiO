@@ -1,4 +1,12 @@
 #include "map.hpp"
+#include <random>
+#include <chrono>
+#include <stack>
+#include <map>
+#include <thread>
+#include <mutex>
+#include <algorithm>
+#include <limits>
 
 Map::Map(sf::Texture &wallTexture, sf::Texture &startTexture, sf::Texture &endTexture, sf::Texture &pointTexture) {
     std::vector<std::vector<char>> cells = mazeToChar(generateTilesPlacement());
@@ -314,7 +322,7 @@ void Map::checkVisibility(const sf::Vector2f &playerPos) {
                 ray.x = cosf(angle);
                 ray.y = sinf(angle);
 
-                float min_t1 = INFINITY;
+                auto min_t1 = std::numeric_limits<float>::infinity();
                 sf::Vector2f rayEndPoint;
                 float rayAngle;
                 bool hitSomething = false;

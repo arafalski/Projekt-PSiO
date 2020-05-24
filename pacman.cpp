@@ -1,4 +1,6 @@
 #include "pacman.hpp"
+#include "consts.hpp"
+#include <cmath>
 
 Pacman::Pacman(sf::Texture *pacmanTexture, const sf::Vector2u &imageCount, const float &switchTime, const float &speed)
         : m_speed(speed), m_animation(pacmanTexture, imageCount, switchTime) {

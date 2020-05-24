@@ -2,9 +2,7 @@
 #define PROJEKT_PACMAN_HPP
 
 #include <SFML/Graphics.hpp>
-#include <cmath>
 #include "animation.hpp"
-#include "consts.hpp"
 #include "collider.hpp"
 
 class Pacman : public sf::RectangleShape {

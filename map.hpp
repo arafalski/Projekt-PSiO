@@ -4,13 +4,6 @@
 #include <SFML/Graphics.hpp>
 #include <array>
 #include <vector>
-#include <random>
-#include <chrono>
-#include <stack>
-#include <map>
-#include <thread>
-#include <mutex>
-#include <algorithm>
 #include "cell.hpp"
 #include "consts.hpp"
 #include "pacman.hpp"

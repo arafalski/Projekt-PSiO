@@ -1,4 +1,5 @@
 #include "tile.hpp"
+#include "consts.hpp"
 
 Tile::Tile(sf::Texture &tileTexture, const char &function, const sf::Vector2f &position) : m_function(function) {
     setPosition(position);
