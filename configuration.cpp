@@ -43,3 +43,9 @@ void Configuration::loadTextures(std::map<std::string, sf::Texture> &textureMap)
         throw std::invalid_argument("Couldn't load a background texture");
     }
 }
+
+void Configuration::loadSoundBuffer(sf::SoundBuffer &soundBufferToLoad) {
+    if (!soundBufferToLoad.loadFromFile("../Assets/Audio/impact.ogg")) {
+        throw std::invalid_argument("Couldn't load audio file");
+    }
+}

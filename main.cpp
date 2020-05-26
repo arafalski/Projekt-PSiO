@@ -46,7 +46,16 @@ int main() {
     background.setTextureRect(
             sf::IntRect(0, 0, static_cast<int>(2 * MAP_WIDTH * TILE), static_cast<int>(2 * MAP_HEIGHT * TILE)));
 
-    Pacman player(&textures["pacman"], sf::Vector2u(2, 1), 0.15f, 200.0f);
+    sf::SoundBuffer hitSoundBuffer;
+    try {
+        Configuration::loadSoundBuffer(hitSoundBuffer);
+    }
+    catch (std::invalid_argument &except) {
+        std::cerr << except.what() << '\n';
+        return EXIT_FAILURE;
+    }
+
+    Pacman player(&textures["pacman"], sf::Vector2u(2, 1), 0.15f, 200.0f, hitSoundBuffer);
     view.setCenter(player.getPosition());
 
     Map tileMap(textures["wall"], textures["start"], textures["end"], textures["point"]);

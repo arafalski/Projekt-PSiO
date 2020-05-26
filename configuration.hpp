@@ -2,6 +2,7 @@
 #define PROJEKT_CONFIGURATION_HPP
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <map>
 
 class Configuration {
@@ -11,6 +12,8 @@ public:
                const sf::Color &color);
 
     static void loadTextures(std::map<std::string, sf::Texture> &textureMap);
+
+    static void loadSoundBuffer(sf::SoundBuffer &soundBufferToLoad);
 };
 
 #endif //PROJEKT_CONFIGURATION_HPP
