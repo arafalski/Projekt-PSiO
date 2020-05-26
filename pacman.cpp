@@ -54,6 +54,8 @@ void Pacman::onCollision(const sf::Vector2f &direction) {
     if (direction.y != 0.0f) {
         m_velocity.y = 0.0f;
     }
+
+    m_hitSound.play();
 }
 
 Collider Pacman::getCollider() {
