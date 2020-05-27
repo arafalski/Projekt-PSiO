@@ -1,4 +1,12 @@
 #include "map.hpp"
+#include <random>
+#include <chrono>
+#include <stack>
+#include <map>
+#include <thread>
+#include <mutex>
+#include <algorithm>
+#include <limits>
 
 Map::Map(sf::Texture &wallTexture, sf::Texture &startTexture, sf::Texture &endTexture, sf::Texture &pointTexture) {
     std::vector<std::vector<char>> cells = mazeToChar(generateTilesPlacement());
@@ -142,11 +150,14 @@ void Map::collisionDetection(Pacman &player, bool &endTileHit) {
     Collider playerCollider = player.getCollider();
 
     auto hitPointIt = m_mapGrid.end();
+    bool hitWall = false;
     for (std::size_t i = 0; i < m_mapGrid.size(); i++) {
         Collider boxCollider = m_mapGrid[i].getCollider();
 
         if (m_mapGrid[i].getFunction() == '#' && boxCollider.checkCollision(playerCollider, direction)) {
             player.onCollision(direction);
+            player.duringCollision = true;
+            hitWall = true;
         } else if (m_mapGrid[i].getFunction() == 'e' &&
                    m_mapGrid[i].getGlobalBounds().intersects(player.getGlobalBounds())) {
             endTileHit = true;
@@ -154,6 +165,10 @@ void Map::collisionDetection(Pacman &player, bool &endTileHit) {
                    m_mapGrid[i].getGlobalBounds().intersects(player.getGlobalBounds())) {
             hitPointIt = std::next(m_mapGrid.begin(), static_cast<int>(i));
         }
+    }
+
+    if(!hitWall){
+        player.duringCollision = false;
     }
 
     if (hitPointIt != m_mapGrid.end()) {
@@ -314,7 +329,7 @@ void Map::checkVisibility(const sf::Vector2f &playerPos) {
                 ray.x = cosf(angle);
                 ray.y = sinf(angle);
 
-                float min_t1 = INFINITY;
+                auto min_t1 = std::numeric_limits<float>::infinity();
                 sf::Vector2f rayEndPoint;
                 float rayAngle;
                 bool hitSomething = false;

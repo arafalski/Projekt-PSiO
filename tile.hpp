@@ -3,7 +3,6 @@
 
 #include <SFML/Graphics.hpp>
 #include "collider.hpp"
-#include "consts.hpp"
 
 class Tile : public sf::RectangleShape {
 public:

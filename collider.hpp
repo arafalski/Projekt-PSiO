@@ -2,7 +2,6 @@
 #define PROJEKT_COLLIDER_HPP
 
 #include <SFML/Graphics.hpp>
-#include <cmath>
 
 class Collider {
 public:

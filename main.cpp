@@ -2,6 +2,7 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <iostream>
 #include "pacman.hpp"
 #include "consts.hpp"
 #include "map.hpp"
@@ -28,12 +29,12 @@ int main() {
         return EXIT_FAILURE;
     }
     sf::Text timeText;
-    textConfig(timeText, font, "Time: 00.00s", 20, sf::Color(255, 102, 0));
+    Configuration::textConfig(timeText, font, "Time: 00.00s", 20, sf::Color(255, 102, 0));
 
     std::map<std::string, sf::Texture> textures;
 
     try {
-        loadTextures(textures);
+        Configuration::loadTextures(textures);
     }
     catch (std::invalid_argument &except) {
         std::cerr << except.what() << '\n';
@@ -41,16 +42,25 @@ int main() {
     }
 
     sf::Sprite background;
-    background.setTexture(textures.at("background"));
+    background.setTexture(textures["background"]);
     background.setTextureRect(
             sf::IntRect(0, 0, static_cast<int>(2 * MAP_WIDTH * TILE), static_cast<int>(2 * MAP_HEIGHT * TILE)));
 
-    Pacman player(&textures.at("pacman"), sf::Vector2u(2, 1), 0.15f, 200.0f);
+    sf::SoundBuffer hitSoundBuffer;
+    try {
+        Configuration::loadSoundBuffer(hitSoundBuffer);
+    }
+    catch (std::invalid_argument &except) {
+        std::cerr << except.what() << '\n';
+        return EXIT_FAILURE;
+    }
+
+    Pacman player(&textures["pacman"], sf::Vector2u(2, 1), 0.15f, 200.0f, hitSoundBuffer);
     view.setCenter(player.getPosition());
 
-    Map tileMap(textures.at("wall"), textures.at("start"), textures.at("end"), textures.at("point"));
+    Map tileMap(textures["wall"], textures["start"], textures["end"], textures["point"]);
 
-    mainMenu(window, font);
+    Screens::mainMenu(window, font);
 
     sf::Mouse::setPosition(sf::Vector2i(WINDOW_WIDTH / 2, WINDOW_HEIGHT / 2), window);
 
@@ -102,7 +112,7 @@ int main() {
         tileMap.collisionDetection(player, endTileHit);
 
         if (endTileHit) {
-            finalScreen(window, icon, font, strPlayingTime);
+            Screens::finalScreen(window, icon, font, strPlayingTime);
         }
 
         tileMap.checkVisibility(player.getPosition());

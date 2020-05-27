@@ -1,4 +1,5 @@
 #include "collider.hpp"
+#include <cmath>
 
 Collider::Collider(sf::RectangleShape &body) : m_body(body) {}
 
