@@ -36,15 +36,15 @@ Map::Map(sf::Texture &wallTexture, sf::Texture &startTexture, sf::Texture &endTe
 
 std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement() {
     std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> maze{};
-    std::stack<std::pair<unsigned int, unsigned int>> backtrack;
+    std::stack<sf::Vector2u> backtrack;
     unsigned int visitedCells;
     std::mt19937 generator(
             static_cast<unsigned int>(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
 
     std::size_t longestPath = 0;
-    std::pair<unsigned int, unsigned int> endCell;
+    sf::Vector2u endCell;
 
-    backtrack.push(std::make_pair(0, 0));
+    backtrack.push(sf::Vector2u (0, 0));
     visitedCells = 1;
     maze[0][0].visit();
     maze[0][0].grid[1][1] = 's';
@@ -52,18 +52,18 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
     do {
         std::vector<Direction> neighbours;
 
-        if (backtrack.top().second > 0 && !maze[backtrack.top().second - 1][backtrack.top().first].wasVisited()) {
+        if (backtrack.top().y > 0 && !maze[backtrack.top().y - 1][backtrack.top().x].wasVisited()) {
             neighbours.emplace_back(Direction::NORTH);
         }
-        if (backtrack.top().second < MAP_HEIGHT - 1 &&
-            !maze[backtrack.top().second + 1][backtrack.top().first].wasVisited()) {
+        if (backtrack.top().y < MAP_HEIGHT - 1 &&
+            !maze[backtrack.top().y + 1][backtrack.top().x].wasVisited()) {
             neighbours.emplace_back(Direction::SOUTH);
         }
-        if (backtrack.top().first < MAP_WIDTH - 1 &&
-            !maze[backtrack.top().second][backtrack.top().first + 1].wasVisited()) {
+        if (backtrack.top().x < MAP_WIDTH - 1 &&
+            !maze[backtrack.top().y][backtrack.top().x + 1].wasVisited()) {
             neighbours.emplace_back(Direction::EAST);
         }
-        if (backtrack.top().first > 0 && !maze[backtrack.top().second][backtrack.top().first - 1].wasVisited()) {
+        if (backtrack.top().x > 0 && !maze[backtrack.top().y][backtrack.top().x - 1].wasVisited()) {
             neighbours.emplace_back(Direction::WEST);
         }
 
@@ -72,27 +72,27 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
 
             switch (nextDir) {
                 case Direction::NORTH:
-                    maze[backtrack.top().second][backtrack.top().first].grid[0][1] = ' ';
-                    backtrack.push(std::make_pair(backtrack.top().first, backtrack.top().second - 1));
-                    maze[backtrack.top().second][backtrack.top().first].visit();
+                    maze[backtrack.top().y][backtrack.top().x].grid[0][1] = ' ';
+                    backtrack.push(sf::Vector2u (backtrack.top().x, backtrack.top().y - 1));
+                    maze[backtrack.top().y][backtrack.top().x].visit();
                     visitedCells++;
                     break;
                 case Direction::SOUTH:
-                    maze[backtrack.top().second + 1][backtrack.top().first].grid[0][1] = ' ';
-                    backtrack.push(std::make_pair(backtrack.top().first, backtrack.top().second + 1));
-                    maze[backtrack.top().second][backtrack.top().first].visit();
+                    maze[backtrack.top().y + 1][backtrack.top().x].grid[0][1] = ' ';
+                    backtrack.push(sf::Vector2u (backtrack.top().x, backtrack.top().y + 1));
+                    maze[backtrack.top().y][backtrack.top().x].visit();
                     visitedCells++;
                     break;
                 case Direction::EAST:
-                    maze[backtrack.top().second][backtrack.top().first + 1].grid[1][0] = ' ';
-                    backtrack.push(std::make_pair(backtrack.top().first + 1, backtrack.top().second));
-                    maze[backtrack.top().second][backtrack.top().first].visit();
+                    maze[backtrack.top().y][backtrack.top().x + 1].grid[1][0] = ' ';
+                    backtrack.push(sf::Vector2u (backtrack.top().x + 1, backtrack.top().y));
+                    maze[backtrack.top().y][backtrack.top().x].visit();
                     visitedCells++;
                     break;
                 case Direction::WEST:
-                    maze[backtrack.top().second][backtrack.top().first].grid[1][0] = ' ';
-                    backtrack.push(std::make_pair(backtrack.top().first - 1, backtrack.top().second));
-                    maze[backtrack.top().second][backtrack.top().first].visit();
+                    maze[backtrack.top().y][backtrack.top().x].grid[1][0] = ' ';
+                    backtrack.push(sf::Vector2u (backtrack.top().x - 1, backtrack.top().y));
+                    maze[backtrack.top().y][backtrack.top().x].visit();
                     visitedCells++;
                     break;
                 default:
@@ -107,7 +107,7 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
         }
     } while (visitedCells < MAP_WIDTH * MAP_HEIGHT);
 
-    maze[endCell.second][endCell.first].grid[1][1] = 'e';
+    maze[endCell.y][endCell.x].grid[1][1] = 'e';
 
     return maze;
 }
