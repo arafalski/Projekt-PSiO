@@ -150,11 +150,14 @@ void Map::collisionDetection(Pacman &player, bool &endTileHit) {
     Collider playerCollider = player.getCollider();
 
     auto hitPointIt = m_mapGrid.end();
+    bool hitWall = false;
     for (std::size_t i = 0; i < m_mapGrid.size(); i++) {
         Collider boxCollider = m_mapGrid[i].getCollider();
 
         if (m_mapGrid[i].getFunction() == '#' && boxCollider.checkCollision(playerCollider, direction)) {
             player.onCollision(direction);
+            player.duringCollision = true;
+            hitWall = true;
         } else if (m_mapGrid[i].getFunction() == 'e' &&
                    m_mapGrid[i].getGlobalBounds().intersects(player.getGlobalBounds())) {
             endTileHit = true;
@@ -162,6 +165,10 @@ void Map::collisionDetection(Pacman &player, bool &endTileHit) {
                    m_mapGrid[i].getGlobalBounds().intersects(player.getGlobalBounds())) {
             hitPointIt = std::next(m_mapGrid.begin(), static_cast<int>(i));
         }
+    }
+
+    if(!hitWall){
+        player.duringCollision = false;
     }
 
     if (hitPointIt != m_mapGrid.end()) {

@@ -18,6 +18,8 @@ public:
 
     Collider getCollider();
 
+    bool duringCollision = false;
+
 private:
     float m_speed;
 
