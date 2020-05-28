@@ -2,7 +2,7 @@
 #include "consts.hpp"
 #include <cmath>
 
-Pacman::Pacman(sf::Texture *pacmanTexture, const sf::Vector2u &imageCount, const float &switchTime, const float &speed,
+Pacman::Pacman(sf::Texture *pacmanTexture, const sf::Vector2u &imageCount, float switchTime, float speed,
                sf::SoundBuffer &soundBuffer)
         : m_speed(speed), m_animation(pacmanTexture, imageCount, switchTime) {
     setSize(sf::Vector2f(40.0f, 40.0f));
@@ -13,7 +13,7 @@ Pacman::Pacman(sf::Texture *pacmanTexture, const sf::Vector2u &imageCount, const
     m_hitSound.setBuffer(soundBuffer);
 }
 
-void Pacman::update(const float &deltaTime, const sf::Vector2f &targetPosition) {
+void Pacman::update(float deltaTime, const sf::Vector2f &targetPosition) {
     sf::Vector2f distance = targetPosition - getPosition();
 
     if (distance.x != 0 && distance.y != 0) {
@@ -56,7 +56,7 @@ void Pacman::onCollision(const sf::Vector2f &direction) {
         m_velocity.y = 0.0f;
     }
 
-    if(!duringCollision){
+    if (!duringCollision) {
         m_hitSound.play();
     }
 }

@@ -2,7 +2,7 @@
 #include <stdexcept>
 
 void Configuration::textConfig(sf::Text &text, const sf::Font &font, const std::string &textToWrite,
-                               const unsigned int &characterSize,
+                               unsigned int characterSize,
                                const sf::Color &color) {
     text.setFont(font);
     text.setString(textToWrite);
