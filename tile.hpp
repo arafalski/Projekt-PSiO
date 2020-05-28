@@ -6,7 +6,7 @@
 
 class Tile : public sf::RectangleShape {
 public:
-    Tile(sf::Texture &tileTexture, const char &function, const sf::Vector2f &position);
+    Tile(sf::Texture &tileTexture, char function, const sf::Vector2f &position);
 
     Collider getCollider();
 

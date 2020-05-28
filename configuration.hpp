@@ -8,7 +8,7 @@
 class Configuration {
 public:
     static void
-    textConfig(sf::Text &text, const sf::Font &font, const std::string &textToWrite, const unsigned int &characterSize,
+    textConfig(sf::Text &text, const sf::Font &font, const std::string &textToWrite, unsigned int characterSize,
                const sf::Color &color);
 
     static void loadTextures(std::map<std::string, sf::Texture> &textureMap);

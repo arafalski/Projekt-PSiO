@@ -8,11 +8,11 @@
 
 class Pacman : public sf::RectangleShape {
 public:
-    Pacman(sf::Texture *pacmanTexture, const sf::Vector2u &imageCount, const float &switchTime, const float &speed, sf::SoundBuffer &soundBuffer);
+    Pacman(sf::Texture *pacmanTexture, const sf::Vector2u &imageCount, float switchTime, float speed, sf::SoundBuffer &soundBuffer);
 
     ~Pacman() override = default;
 
-    void update(const float &deltaTime, const sf::Vector2f &targetPosition);
+    void update(float deltaTime, const sf::Vector2f &targetPosition);
 
     void onCollision(const sf::Vector2f &direction);
 

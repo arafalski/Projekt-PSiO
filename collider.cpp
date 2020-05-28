@@ -3,7 +3,7 @@
 
 Collider::Collider(sf::RectangleShape &body) : m_body(body) {}
 
-void Collider::move(const float &dx, const float &dy) {
+void Collider::move(float dx, float dy) {
     m_body.move(dx, dy);
 }
 
