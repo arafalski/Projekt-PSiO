@@ -115,7 +115,7 @@ int main() {
             Screens::finalScreen(window, icon, font, strPlayingTime);
         }
 
-        tileMap.checkVisibility(player.getPosition());
+        tileMap.checkVisibility(player);
 
         view.setCenter(player.getPosition());
         timeText.setPosition(player.getPosition().x + 20.0f, player.getPosition().y);
