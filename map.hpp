@@ -19,7 +19,7 @@ public:
 
     void collisionDetection(Pacman &player, bool &endTileHit);
 
-    void checkVisibility(const Pacman &player, const sf::Vector2f &mousePos);
+    void checkVisibility(const Pacman &player);
 
     void drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window);
 
@@ -60,7 +60,7 @@ private:
 
     void sortAndEraseDuplicatesVisiblePoints();
 
-    void checkIntersection(float angle, sf::Vector2f ray, const sf::Vector2f &playerPos);
+    void checkIntersection(float angle, const sf::Vector2f &playerPos);
 };
 
 #endif //PROJEKT_MAP_HPP

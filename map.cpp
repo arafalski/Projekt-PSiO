@@ -310,15 +310,13 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
     }
 }
 
-void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
+void Map::checkVisibility(const Pacman &player) {
     m_visiblePolyPoints.clear();
     auto playerPos = player.getPosition();
     auto playerAngle = static_cast<float>(player.getAngle() * M_PI) / 180.0f;
 
     // TODO: Need to count the vector of 2 predefined rays
-    std::vector<std::pair<float, sf::Vector2f>> visibleAngles{
-            std::make_pair(playerAngle - LIGHT_WIDTH, mousePos),
-            std::make_pair(playerAngle + LIGHT_WIDTH, mousePos)};
+    std::vector<float> visibleAngles{playerAngle - LIGHT_WIDTH, playerAngle + LIGHT_WIDTH};
 
     for (const auto &edge : m_edges) {
         for (int i = 0; i < 2; i++) {
@@ -329,23 +327,24 @@ void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
 
             if ((base_angle >= playerAngle && base_angle <= playerAngle + LIGHT_WIDTH) ||
                 (base_angle <= playerAngle && base_angle >= playerAngle - LIGHT_WIDTH)) {
-                visibleAngles.emplace_back(std::make_pair(base_angle, ray));
+                visibleAngles.emplace_back(base_angle);
             }
         }
     }
 
-    for (const auto &[angle, ray] : visibleAngles) {
-        checkIntersection(angle, ray, playerPos);
+    for (const auto &angle : visibleAngles) {
+        checkIntersection(angle, playerPos);
     }
 
     sortAndEraseDuplicatesVisiblePoints();
 }
 
-void Map::checkIntersection(float angle, sf::Vector2f ray, const sf::Vector2f &playerPos) {
+void Map::checkIntersection(float angle, const sf::Vector2f &playerPos) {
     for (int j = 0; j < 3; j++) {
         if (j == 1) angle -= 0.0001f;
         if (j == 2) angle += 0.0002f;
 
+        sf::Vector2f ray;
         ray.x = cosf(angle);
         ray.y = sinf(angle);
 

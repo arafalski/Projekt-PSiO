@@ -106,17 +106,16 @@ int main() {
             }
         }
 
-        sf::Vector2f mousePos(window.mapPixelToCoords(sf::Mouse::getPosition(window)).x,
-                              window.mapPixelToCoords(sf::Mouse::getPosition(window)).y);
-        player.update(deltaTime, mousePos);
+        player.update(deltaTime, sf::Vector2f(window.mapPixelToCoords(sf::Mouse::getPosition(window)).x,
+                                              window.mapPixelToCoords(sf::Mouse::getPosition(window)).y));
 
         tileMap.collisionDetection(player, endTileHit);
 
         if (endTileHit) {
-            Screens::finalScreen(window, icon, font, strPlayingTime);
+            Screens::finalScreen(window, font, strPlayingTime);
         }
 
-        tileMap.checkVisibility(player, mousePos);
+        tileMap.checkVisibility(player);
 
         view.setCenter(player.getPosition());
         timeText.setPosition(player.getPosition().x + 20.0f, player.getPosition().y);
