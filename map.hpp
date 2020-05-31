@@ -19,7 +19,7 @@ public:
 
     void collisionDetection(Pacman &player, bool &endTileHit);
 
-    void checkVisibility(const Pacman &player);
+    void checkVisibility(const Pacman &player, const sf::Vector2f &mousePos);
 
     void drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window);
 
@@ -59,6 +59,8 @@ private:
     void addPolyMapBoundary();
 
     void sortAndEraseDuplicatesVisiblePoints();
+
+    void checkIntersection(float angle, sf::Vector2f ray, const sf::Vector2f &playerPos);
 };
 
 #endif //PROJEKT_MAP_HPP

@@ -310,10 +310,15 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
     }
 }
 
-void Map::checkVisibility(const Pacman &player) {
+void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
     m_visiblePolyPoints.clear();
     auto playerPos = player.getPosition();
     auto playerAngle = static_cast<float>(player.getAngle() * M_PI) / 180.0f;
+
+    // TODO: Need to count the vector of 2 predefined rays
+    std::vector<std::pair<float, sf::Vector2f>> visibleAngles{
+            std::make_pair(playerAngle - LIGHT_WIDTH, mousePos),
+            std::make_pair(playerAngle + LIGHT_WIDTH, mousePos)};
 
     for (const auto &edge : m_edges) {
         for (int i = 0; i < 2; i++) {
@@ -324,50 +329,56 @@ void Map::checkVisibility(const Pacman &player) {
 
             if ((base_angle >= playerAngle && base_angle <= playerAngle + LIGHT_WIDTH) ||
                 (base_angle <= playerAngle && base_angle >= playerAngle - LIGHT_WIDTH)) {
-                float angle;
+                visibleAngles.emplace_back(std::make_pair(base_angle, ray));
+            }
+        }
+    }
 
-                for (int j = 0; j < 3; j++) {
-                    if (j == 0) angle = base_angle - 0.0001f;
-                    if (j == 1) angle = base_angle;
-                    if (j == 2) angle = base_angle + 0.0001f;
+    for (const auto &[angle, ray] : visibleAngles) {
+        checkIntersection(angle, ray, playerPos);
+    }
 
-                    ray.x = cosf(angle);
-                    ray.y = sinf(angle);
+    sortAndEraseDuplicatesVisiblePoints();
+}
 
-                    auto min_t1 = std::numeric_limits<float>::infinity();
-                    sf::Vector2f rayEndPoint;
-                    float rayAngle;
-                    bool hitSomething = false;
+void Map::checkIntersection(float angle, sf::Vector2f ray, const sf::Vector2f &playerPos) {
+    for (int j = 0; j < 3; j++) {
+        if (j == 1) angle -= 0.0001f;
+        if (j == 2) angle += 0.0002f;
 
-                    for (const auto &edge2 : m_edges) {
-                        sf::Vector2f segment(edge2.end.x - edge2.start.x,
-                                             edge2.end.y - edge2.start.y);
+        ray.x = cosf(angle);
+        ray.y = sinf(angle);
 
-                        if (std::abs(segment.x - ray.x) > 0.0f && std::abs(segment.y - ray.y) > 0.0f) {
-                            float t2 =
-                                    (ray.x * (edge2.start.y - playerPos.y) + (ray.y * (playerPos.x - edge2.start.x))) /
-                                    (segment.x * ray.y - segment.y * ray.x);
-                            float t1 = (edge2.start.x + segment.x * t2 - playerPos.x) / ray.x;
+        auto min_t1 = std::numeric_limits<float>::infinity();
+        sf::Vector2f rayEndPoint;
+        float rayAngle;
+        bool hitSomething = false;
 
-                            if (t1 > 0.0f && t2 >= 0.0f && t2 <= 1.0f) {
-                                if (t1 < min_t1) {
-                                    min_t1 = t1;
-                                    rayEndPoint.x = playerPos.x + ray.x * t1;
-                                    rayEndPoint.y = playerPos.y + ray.y * t1;
-                                    rayAngle = atan2f(rayEndPoint.y - playerPos.y, rayEndPoint.x - playerPos.x);
-                                    hitSomething = true;
-                                }
-                            }
-                        }
-                    }
-                    if (hitSomething) {
-                        m_visiblePolyPoints.emplace_back(std::make_pair(rayAngle, rayEndPoint));
+        for (const auto &edge2 : m_edges) {
+            sf::Vector2f segment(edge2.end.x - edge2.start.x,
+                                 edge2.end.y - edge2.start.y);
+
+            if (std::abs(segment.x - ray.x) > 0.0f && std::abs(segment.y - ray.y) > 0.0f) {
+                float t2 =
+                        (ray.x * (edge2.start.y - playerPos.y) + (ray.y * (playerPos.x - edge2.start.x))) /
+                        (segment.x * ray.y - segment.y * ray.x);
+                float t1 = (edge2.start.x + segment.x * t2 - playerPos.x) / ray.x;
+
+                if (t1 > 0.0f && t2 >= 0.0f && t2 <= 1.0f) {
+                    if (t1 < min_t1) {
+                        min_t1 = t1;
+                        rayEndPoint.x = playerPos.x + ray.x * t1;
+                        rayEndPoint.y = playerPos.y + ray.y * t1;
+                        rayAngle = atan2f(rayEndPoint.y - playerPos.y, rayEndPoint.x - playerPos.x);
+                        hitSomething = true;
                     }
                 }
             }
         }
+        if (hitSomething) {
+            m_visiblePolyPoints.emplace_back(std::make_pair(rayAngle, rayEndPoint));
+        }
     }
-    sortAndEraseDuplicatesVisiblePoints();
 }
 
 void Map::sortAndEraseDuplicatesVisiblePoints() {
