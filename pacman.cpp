@@ -39,9 +39,9 @@ void Pacman::update(float deltaTime, const sf::Vector2f &targetPosition) {
         m_velocity.y *= -1;
     }
 
-    auto angle = static_cast<float>(atan2f(distance.x, -distance.y) * 180 / M_PI) - 90.0f;
+    m_angle = static_cast<float>(atan2f(distance.x, -distance.y) * 180 / M_PI) - 90.0f;
     move(m_velocity * deltaTime);
-    setRotation(angle);
+    setRotation(m_angle);
 
     m_animation.update(deltaTime);
     setTextureRect(m_animation.uvRect);
@@ -63,4 +63,8 @@ void Pacman::onCollision(const sf::Vector2f &direction) {
 
 Collider Pacman::getCollider() {
     return Collider(*this);
+}
+
+float Pacman::getAngle() const {
+    return m_angle;
 }

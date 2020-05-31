@@ -18,10 +18,14 @@ public:
 
     Collider getCollider();
 
+    float getAngle() const;
+
     bool duringCollision = false;
 
 private:
     float m_speed;
+
+    float m_angle;
 
     sf::Vector2f m_velocity;
 
