@@ -1,8 +1,9 @@
 #ifndef PROJEKT_SCREENS_HPP
 #define PROJEKT_SCREENS_HPP
 
-#include <SFML/Graphics.hpp>
 #include <string>
+
+#include <SFML/Graphics.hpp>
 
 class Screens {
 public:

@@ -1,9 +1,10 @@
 #ifndef PROJEKT_MAP_HPP
 #define PROJEKT_MAP_HPP
 
-#include <SFML/Graphics.hpp>
 #include <array>
 #include <vector>
+
+#include <SFML/Graphics.hpp>
 #include "cell.hpp"
 #include "consts.hpp"
 #include "pacman.hpp"

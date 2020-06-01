@@ -1,14 +1,15 @@
-#include <SFML/Graphics.hpp>
-#include <vector>
+#include <iostream>
 #include <map>
 #include <string>
-#include <iostream>
-#include "pacman.hpp"
+#include <vector>
+
+#include <SFML/Graphics.hpp>
+#include "collider.hpp"
+#include "configuration.hpp"
 #include "consts.hpp"
 #include "map.hpp"
-#include "collider.hpp"
 #include "screens.hpp"
-#include "configuration.hpp"
+#include "pacman.hpp"
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman Maze", sf::Style::Close);

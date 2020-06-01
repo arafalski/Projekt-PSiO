@@ -1,8 +1,8 @@
 #ifndef PROJEKT_PACMAN_HPP
 #define PROJEKT_PACMAN_HPP
 
-#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
 #include "animation.hpp"
 #include "collider.hpp"
 
@@ -18,14 +18,10 @@ public:
 
     Collider getCollider();
 
-    float getAngle() const;
-
     bool duringCollision = false;
 
 private:
     float m_speed;
-
-    float m_angle;
 
     sf::Vector2f m_velocity;
 

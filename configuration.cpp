@@ -1,4 +1,5 @@
 #include "configuration.hpp"
+
 #include <stdexcept>
 
 void Configuration::textConfig(sf::Text &text, const sf::Font &font, const std::string &textToWrite,

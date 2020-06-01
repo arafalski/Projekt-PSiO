@@ -1,6 +1,8 @@
 #include "pacman.hpp"
-#include "consts.hpp"
+
 #include <cmath>
+
+#include "consts.hpp"
 
 Pacman::Pacman(sf::Texture *pacmanTexture, const sf::Vector2u &imageCount, float switchTime, float speed,
                sf::SoundBuffer &soundBuffer)
@@ -39,9 +41,9 @@ void Pacman::update(float deltaTime, const sf::Vector2f &targetPosition) {
         m_velocity.y *= -1;
     }
 
-    m_angle = static_cast<float>(atan2f(distance.x, -distance.y) * 180 / M_PI) - 90.0f;
+    auto angle = static_cast<float>(atan2f(distance.x, -distance.y) * 180 / M_PI) - 90.0f;
     move(m_velocity * deltaTime);
-    setRotation(m_angle);
+    setRotation(angle);
 
     m_animation.update(deltaTime);
     setTextureRect(m_animation.uvRect);
@@ -63,8 +65,4 @@ void Pacman::onCollision(const sf::Vector2f &direction) {
 
 Collider Pacman::getCollider() {
     return Collider(*this);
-}
-
-float Pacman::getAngle() const {
-    return m_angle;
 }

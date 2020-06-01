@@ -1,7 +1,9 @@
 #include "screens.hpp"
+
+#include <algorithm>
 #include <fstream>
 #include <vector>
-#include <algorithm>
+
 #include "configuration.hpp"
 #include "leaderboard.hpp"
 

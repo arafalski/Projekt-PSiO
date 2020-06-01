@@ -1,12 +1,14 @@
 #include "map.hpp"
-#include <random>
-#include <chrono>
-#include <stack>
-#include <map>
-#include <thread>
-#include <mutex>
+
 #include <algorithm>
+#include <chrono>
+#include <iostream>
 #include <limits>
+#include <map>
+#include <mutex>
+#include <random>
+#include <stack>
+#include <thread>
 
 Map::Map(sf::Texture &wallTexture, sf::Texture &startTexture, sf::Texture &endTexture, sf::Texture &pointTexture) {
     std::vector<std::vector<char>> cells = mazeToChar(generateTilesPlacement());
@@ -313,20 +315,19 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
 void Map::checkVisibility(const Pacman &player) {
     m_visiblePolyPoints.clear();
     auto playerPos = player.getPosition();
-    auto playerAngle = static_cast<float>(player.getAngle() * M_PI) / 180.0f;
+    auto playerAngle = 3.1416f;
+    std::cout << "Player Angle: " << playerAngle << '\n';
 
-    // TODO: Need to count the vector of 2 predefined rays
     std::vector<float> visibleAngles{playerAngle - LIGHT_WIDTH, playerAngle + LIGHT_WIDTH};
 
     for (const auto &edge : m_edges) {
         for (int i = 0; i < 2; i++) {
-            sf::Vector2f ray((i == 0 ? edge.start.x : edge.end.x) - playerPos.x,
-                             (i == 0 ? edge.start.y : edge.end.y) - playerPos.y);
+            sf::Vector2f point((i == 0 ? edge.start.x : edge.end.x) - playerPos.x,
+                               (i == 0 ? edge.start.y : edge.end.y) - playerPos.y);
 
-            auto base_angle = atan2f(ray.y, ray.x);
+            auto base_angle = atan2f(point.y, point.x);
 
-            if ((base_angle >= playerAngle && base_angle <= playerAngle + LIGHT_WIDTH) ||
-                (base_angle <= playerAngle && base_angle >= playerAngle - LIGHT_WIDTH)) {
+            if (base_angle <= playerAngle + LIGHT_WIDTH && base_angle >= playerAngle - LIGHT_WIDTH) {
                 visibleAngles.emplace_back(base_angle);
             }
         }
@@ -396,6 +397,7 @@ void Map::sortAndEraseDuplicatesVisiblePoints() {
 }
 
 void Map::drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window) {
+    std::cout << m_visiblePolyPoints.size() << '\n';
     sf::VertexArray light(sf::TriangleFan, m_visiblePolyPoints.size() + 1);
     sf::Color lightColor(255, 202, 3, 80);
 
