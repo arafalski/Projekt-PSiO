@@ -61,6 +61,8 @@ private:
 
     void sortAndEraseDuplicatesVisiblePoints();
 
+    float angleCount(sf::Vector2f vec);
+
     void checkIntersection(float angle, const sf::Vector2f &playerPos);
 };
 

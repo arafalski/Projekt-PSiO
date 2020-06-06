@@ -313,6 +313,19 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
     }
 }
 
+float Map::angleCount(sf::Vector2f vec) {
+    vec.y *= -1;
+
+    float angle;
+    if (vec.y >= 0) {
+        angle = atan2f(vec.y, vec.x) * 180.0f / static_cast<float>(M_PI);
+    } else {
+        angle = 360.0f + atan2f(vec.y, vec.x) * 180.0f / static_cast<float>(M_PI);
+    }
+
+    return angle;
+}
+
 void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
     m_visiblePolyPoints.clear();
     auto playerPos = player.getPosition();
@@ -321,9 +334,10 @@ void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
     sf::Vector2f firstBorder(toCursor.x - toCursor.y, toCursor.x + toCursor.y);
     sf::Vector2f secondBorder(toCursor.x + toCursor.y, toCursor.y - toCursor.x);
 
-    auto firstAngle = atan2f(firstBorder.y, firstBorder.x);
-    auto secondAngle = atan2f(secondBorder.y, secondBorder.x);
+    auto firstAngle = angleCount(firstBorder);
+    auto secondAngle = angleCount(secondBorder);
 
+    std::cout << "Mouse angle: " << angleCount(toCursor);
     std::cout << "First angle: " << firstAngle << '\n';
     std::cout << "Second angle: " << secondAngle << '\n';
 
@@ -334,21 +348,9 @@ void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
             sf::Vector2f point((i == 0 ? edge.start.x : edge.end.x) - playerPos.x,
                                (i == 0 ? edge.start.y : edge.end.y) - playerPos.y);
 
-            auto base_angle = atan2f(point.y, point.x);
-            if((firstAngle >= 0 && secondAngle >= 0) || (firstAngle <= 0 && secondAngle <= 0)){
-                if (base_angle > secondAngle && base_angle < firstAngle) {
-                    visibleAngles.emplace_back(base_angle);
-                }
-            }
-            else if(firstAngle <= 0 && secondAngle >= 0){
-                if(base_angle < firstAngle || base_angle > secondAngle){
-                    visibleAngles.emplace_back(base_angle);
-                }
-            }
-            else{
-                if(base_angle > firstAngle && -base_angle < secondAngle){
-                    visibleAngles.emplace_back(base_angle);
-                }
+            auto base_angle = angleCount(point);
+            if (base_angle < secondAngle && base_angle > firstAngle) {
+                visibleAngles.emplace_back(base_angle);
             }
         }
     }
@@ -366,8 +368,8 @@ void Map::checkIntersection(float angle, const sf::Vector2f &playerPos) {
         if (j == 2) angle += 0.0002f;
 
         sf::Vector2f ray;
-        ray.x = cosf(angle);
-        ray.y = sinf(angle);
+        ray.x = cosf(angle * static_cast<float>(M_PI) / 180.0f);
+        ray.y = -sinf(angle * static_cast<float>(M_PI) / 180.0f);
 
         auto min_t1 = std::numeric_limits<float>::infinity();
         sf::Vector2f rayEndPoint;
@@ -389,7 +391,7 @@ void Map::checkIntersection(float angle, const sf::Vector2f &playerPos) {
                         min_t1 = t1;
                         rayEndPoint.x = playerPos.x + ray.x * t1;
                         rayEndPoint.y = playerPos.y + ray.y * t1;
-                        rayAngle = atan2f(rayEndPoint.y - playerPos.y, rayEndPoint.x - playerPos.x);
+                        rayAngle = angleCount(rayEndPoint - playerPos);
                         hitSomething = true;
                     }
                 }
