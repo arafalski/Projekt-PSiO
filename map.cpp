@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <iostream>
 #include <limits>
 #include <map>
@@ -312,13 +313,21 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
     }
 }
 
-void Map::checkVisibility(const Pacman &player) {
+void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
     m_visiblePolyPoints.clear();
     auto playerPos = player.getPosition();
-    auto playerAngle = 3.1416f;
-    std::cout << "Player Angle: " << playerAngle << '\n';
+    auto toCursor = mousePos - playerPos;
 
-    std::vector<float> visibleAngles{playerAngle - LIGHT_WIDTH, playerAngle + LIGHT_WIDTH};
+    sf::Vector2f firstBorder(toCursor.x - toCursor.y, toCursor.x + toCursor.y);
+    sf::Vector2f secondBorder(toCursor.x + toCursor.y, toCursor.y - toCursor.x);
+
+    auto firstAngle = atan2f(firstBorder.y, firstBorder.x);
+    auto secondAngle = atan2f(secondBorder.y, secondBorder.x);
+
+    std::cout << "First angle: " << firstAngle << '\n';
+    std::cout << "Second angle: " << secondAngle << '\n';
+
+    std::vector<float> visibleAngles{firstAngle, secondAngle};
 
     for (const auto &edge : m_edges) {
         for (int i = 0; i < 2; i++) {
@@ -326,9 +335,20 @@ void Map::checkVisibility(const Pacman &player) {
                                (i == 0 ? edge.start.y : edge.end.y) - playerPos.y);
 
             auto base_angle = atan2f(point.y, point.x);
-
-            if (base_angle <= playerAngle + LIGHT_WIDTH && base_angle >= playerAngle - LIGHT_WIDTH) {
-                visibleAngles.emplace_back(base_angle);
+            if((firstAngle >= 0 && secondAngle >= 0) || (firstAngle <= 0 && secondAngle <= 0)){
+                if (base_angle > secondAngle && base_angle < firstAngle) {
+                    visibleAngles.emplace_back(base_angle);
+                }
+            }
+            else if(firstAngle <= 0 && secondAngle >= 0){
+                if(base_angle < firstAngle || base_angle > secondAngle){
+                    visibleAngles.emplace_back(base_angle);
+                }
+            }
+            else{
+                if(base_angle > firstAngle && -base_angle < secondAngle){
+                    visibleAngles.emplace_back(base_angle);
+                }
             }
         }
     }

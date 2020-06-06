@@ -106,9 +106,9 @@ int main() {
                 window.close();
             }
         }
-
-        player.update(deltaTime, sf::Vector2f(window.mapPixelToCoords(sf::Mouse::getPosition(window)).x,
-                                              window.mapPixelToCoords(sf::Mouse::getPosition(window)).y));
+        sf::Vector2f mousePos(window.mapPixelToCoords(sf::Mouse::getPosition(window)).x,
+                              window.mapPixelToCoords(sf::Mouse::getPosition(window)).y);
+        player.update(deltaTime, mousePos);
 
         tileMap.collisionDetection(player, endTileHit);
 
@@ -116,7 +116,7 @@ int main() {
             Screens::finalScreen(window, font, strPlayingTime);
         }
 
-        tileMap.checkVisibility(player);
+        tileMap.checkVisibility(player, mousePos);
 
         view.setCenter(player.getPosition());
         timeText.setPosition(player.getPosition().x + 20.0f, player.getPosition().y);

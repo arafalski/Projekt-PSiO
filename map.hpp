@@ -20,7 +20,7 @@ public:
 
     void collisionDetection(Pacman &player, bool &endTileHit);
 
-    void checkVisibility(const Pacman &player);
+    void checkVisibility(const Pacman &player, const sf::Vector2f &mousePos);
 
     void drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window);
 
