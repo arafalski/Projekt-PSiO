@@ -349,8 +349,14 @@ void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
                                (i == 0 ? edge.start.y : edge.end.y) - playerPos.y);
 
             auto base_angle = angleCount(point);
-            if (base_angle < secondAngle && base_angle > firstAngle) {
-                visibleAngles.emplace_back(base_angle);
+            if(firstAngle > 270.0f && secondAngle < 90.0f){
+                if (base_angle < secondAngle || base_angle > firstAngle) {
+                    visibleAngles.emplace_back(base_angle);
+                }
+            } else{
+                if (base_angle < secondAngle && base_angle > firstAngle) {
+                    visibleAngles.emplace_back(base_angle);
+                }
             }
         }
     }
