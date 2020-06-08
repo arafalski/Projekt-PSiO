@@ -1,7 +1,9 @@
 #include "screens.hpp"
+
+#include <algorithm>
 #include <fstream>
 #include <vector>
-#include <algorithm>
+
 #include "configuration.hpp"
 #include "leaderboard.hpp"
 
@@ -62,10 +64,9 @@ void Screens::mainMenu(sf::RenderWindow &window, const sf::Font &font) {
     }
 }
 
-void Screens::finalScreen(sf::RenderWindow &window, const sf::Image &icon, const sf::Font &font,
+void Screens::finalScreen(sf::RenderWindow &window, const sf::Font &font,
                           const std::string &strPlayingTime) {
     window.create(sf::VideoMode(450, 520), "Pacman Maze", sf::Style::Close);
-    window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
 
     sf::Text victoryText;
     Configuration::textConfig(victoryText, font, "Win!!!", 100, sf::Color::Red);

@@ -1,6 +1,8 @@
 #include "pacman.hpp"
-#include "consts.hpp"
+
 #include <cmath>
+
+#include "consts.hpp"
 
 Pacman::Pacman(sf::Texture *pacmanTexture, const sf::Vector2u &imageCount, float switchTime, float speed,
                sf::SoundBuffer &soundBuffer)

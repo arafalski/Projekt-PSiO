@@ -1,9 +1,10 @@
 #ifndef PROJEKT_MAP_HPP
 #define PROJEKT_MAP_HPP
 
-#include <SFML/Graphics.hpp>
 #include <array>
 #include <vector>
+
+#include <SFML/Graphics.hpp>
 #include "cell.hpp"
 #include "consts.hpp"
 #include "pacman.hpp"
@@ -19,7 +20,7 @@ public:
 
     void collisionDetection(Pacman &player, bool &endTileHit);
 
-    void checkVisibility(const sf::Vector2f &playerPos);
+    void checkVisibility(const Pacman &player, const sf::Vector2f &mousePos);
 
     void drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window);
 
@@ -59,6 +60,10 @@ private:
     void addPolyMapBoundary();
 
     void sortAndEraseDuplicatesVisiblePoints();
+
+    float angleCount(sf::Vector2f vec);
+
+    void checkIntersection(float angle, const sf::Vector2f &playerPos);
 };
 
 #endif //PROJEKT_MAP_HPP

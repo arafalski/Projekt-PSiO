@@ -1,9 +1,10 @@
 #ifndef PROJEKT_CONFIGURATION_HPP
 #define PROJEKT_CONFIGURATION_HPP
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
 #include <map>
+
+#include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
 
 class Configuration {
 public:

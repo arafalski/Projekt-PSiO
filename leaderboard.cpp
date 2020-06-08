@@ -1,6 +1,7 @@
 #include "leaderboard.hpp"
-#include <fstream>
+
 #include <algorithm>
+#include <fstream>
 
 Leaderboard::Leaderboard(const std::string &strPlayingTime) {
     std::fstream leaderboardInputFile("leaderboard.txt", std::ios::in);

@@ -1,8 +1,8 @@
 #ifndef PROJEKT_PACMAN_HPP
 #define PROJEKT_PACMAN_HPP
 
-#include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
 #include "animation.hpp"
 #include "collider.hpp"
 

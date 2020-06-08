@@ -1,14 +1,15 @@
-#include <SFML/Graphics.hpp>
-#include <vector>
+#include <iostream>
 #include <map>
 #include <string>
-#include <iostream>
-#include "pacman.hpp"
+#include <vector>
+
+#include <SFML/Graphics.hpp>
+#include "collider.hpp"
+#include "configuration.hpp"
 #include "consts.hpp"
 #include "map.hpp"
-#include "collider.hpp"
 #include "screens.hpp"
-#include "configuration.hpp"
+#include "pacman.hpp"
 
 int main() {
     sf::RenderWindow window(sf::VideoMode(WINDOW_WIDTH, WINDOW_HEIGHT), "Pacman Maze", sf::Style::Close);
@@ -105,17 +106,17 @@ int main() {
                 window.close();
             }
         }
-
-        player.update(deltaTime, sf::Vector2f(window.mapPixelToCoords(sf::Mouse::getPosition(window)).x,
-                                              window.mapPixelToCoords(sf::Mouse::getPosition(window)).y));
+        sf::Vector2f mousePos(window.mapPixelToCoords(sf::Mouse::getPosition(window)).x,
+                              window.mapPixelToCoords(sf::Mouse::getPosition(window)).y);
+        player.update(deltaTime, mousePos);
 
         tileMap.collisionDetection(player, endTileHit);
 
         if (endTileHit) {
-            Screens::finalScreen(window, icon, font, strPlayingTime);
+            Screens::finalScreen(window, font, strPlayingTime);
         }
 
-        tileMap.checkVisibility(player.getPosition());
+        tileMap.checkVisibility(player, mousePos);
 
         view.setCenter(player.getPosition());
         timeText.setPosition(player.getPosition().x + 20.0f, player.getPosition().y);
