@@ -3,7 +3,6 @@
 #include <algorithm>
 #include <chrono>
 #include <cmath>
-#include <iostream>
 #include <limits>
 #include <map>
 #include <mutex>
@@ -58,12 +57,10 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
         if (backtrack.top().y > 0 && !maze[backtrack.top().y - 1][backtrack.top().x].wasVisited()) {
             neighbours.emplace_back(Direction::NORTH);
         }
-        if (backtrack.top().y < MAP_HEIGHT - 1 &&
-            !maze[backtrack.top().y + 1][backtrack.top().x].wasVisited()) {
+        if (backtrack.top().y < MAP_HEIGHT - 1 && !maze[backtrack.top().y + 1][backtrack.top().x].wasVisited()) {
             neighbours.emplace_back(Direction::SOUTH);
         }
-        if (backtrack.top().x < MAP_WIDTH - 1 &&
-            !maze[backtrack.top().y][backtrack.top().x + 1].wasVisited()) {
+        if (backtrack.top().x < MAP_WIDTH - 1 && !maze[backtrack.top().y][backtrack.top().x + 1].wasVisited()) {
             neighbours.emplace_back(Direction::EAST);
         }
         if (backtrack.top().x > 0 && !maze[backtrack.top().y][backtrack.top().x - 1].wasVisited()) {
@@ -225,8 +222,8 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInCh
 
     addPolyMapBoundary();
 
-    for (unsigned int i = 1; i < cells.size() - 1; i++) {
-        for (unsigned int j = 1; j < cells[i].size() - 1; j++) {
+    for (size_t i = 1; i < cells.size() - 1; i++) {
+        for (size_t j = 1; j < cells[i].size() - 1; j++) {
 
             if (cells[i][j].exist) {
                 if (!cells[i][j - 1].exist) {
@@ -337,10 +334,6 @@ void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
     auto firstAngle = angleCount(firstBorder);
     auto secondAngle = angleCount(secondBorder);
 
-    std::cout << "Mouse angle: " << angleCount(toCursor);
-    std::cout << "First angle: " << firstAngle << '\n';
-    std::cout << "Second angle: " << secondAngle << '\n';
-
     std::vector<float> visibleAngles{firstAngle, secondAngle};
 
     for (const auto &edge : m_edges) {
@@ -349,11 +342,11 @@ void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
                                (i == 0 ? edge.start.y : edge.end.y) - playerPos.y);
 
             auto base_angle = angleCount(point);
-            if(firstAngle > 270.0f && secondAngle < 90.0f){
+            if (firstAngle > 270.0f && secondAngle < 90.0f) {
                 if (base_angle < secondAngle || base_angle > firstAngle) {
                     visibleAngles.emplace_back(base_angle);
                 }
-            } else{
+            } else {
                 if (base_angle < secondAngle && base_angle > firstAngle) {
                     visibleAngles.emplace_back(base_angle);
                 }
@@ -410,10 +403,19 @@ void Map::checkIntersection(float angle, const sf::Vector2f &playerPos) {
 }
 
 void Map::sortAndEraseDuplicatesVisiblePoints() {
-    std::sort(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(),
-              [](const std::pair<float, sf::Vector2f> &p1, const std::pair<float, sf::Vector2f> &p2) {
-                  return p1.first < p2.first;
-              });
+    auto sortAngles = [](const std::pair<float, sf::Vector2f> &lhs, const std::pair<float, sf::Vector2f> &rhs) {
+        return lhs.first < rhs.first;
+    };
+
+    if (m_visiblePolyPoints[0].first >= 260.0f &&  m_visiblePolyPoints[4].first <= 100.0f) {
+        auto firstConvex = std::partition(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(),
+                                          [](const std::pair<float, sf::Vector2f> &el) { return el.first > 180.0f; });
+
+        std::sort(m_visiblePolyPoints.begin(), firstConvex, sortAngles);
+        std::sort(firstConvex, m_visiblePolyPoints.end(), sortAngles);
+    } else {
+        std::sort(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(), sortAngles);
+    }
 
     auto it = std::unique(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(),
                           [](const std::pair<float, sf::Vector2f> &p1, const std::pair<float, sf::Vector2f> &p2) {
@@ -425,7 +427,6 @@ void Map::sortAndEraseDuplicatesVisiblePoints() {
 }
 
 void Map::drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window) {
-    std::cout << m_visiblePolyPoints.size() << '\n';
     sf::VertexArray light(sf::TriangleFan, m_visiblePolyPoints.size() + 1);
     sf::Color lightColor(255, 202, 3, 80);
 
