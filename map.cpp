@@ -403,13 +403,13 @@ void Map::checkIntersection(float angle, const sf::Vector2f &playerPos) {
 }
 
 void Map::sortAndEraseDuplicatesVisiblePoints() {
-    auto sortAngles = [](const std::pair<float, sf::Vector2f> &lhs, const std::pair<float, sf::Vector2f> &rhs) {
+    auto sortAngles = [](const auto &lhs, const auto &rhs) {
         return lhs.first < rhs.first;
     };
 
-    if (m_visiblePolyPoints[0].first >= 260.0f &&  m_visiblePolyPoints[4].first <= 100.0f) {
+    if (m_visiblePolyPoints[0].first >= 260.0f && m_visiblePolyPoints[4].first <= 100.0f) {
         auto firstConvex = std::partition(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(),
-                                          [](const std::pair<float, sf::Vector2f> &el) { return el.first > 180.0f; });
+                                          [](const auto &el) { return el.first > 180.0f; });
 
         std::sort(m_visiblePolyPoints.begin(), firstConvex, sortAngles);
         std::sort(firstConvex, m_visiblePolyPoints.end(), sortAngles);
@@ -418,7 +418,7 @@ void Map::sortAndEraseDuplicatesVisiblePoints() {
     }
 
     auto it = std::unique(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(),
-                          [](const std::pair<float, sf::Vector2f> &p1, const std::pair<float, sf::Vector2f> &p2) {
+                          [](const auto &p1, const auto &p2) {
                               return std::abs(p1.second.x - p2.second.x) < 0.1f &&
                                      std::abs(p1.second.y - p2.second.y) < 0.1f;
                           });
