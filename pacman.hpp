@@ -4,6 +4,7 @@
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
 #include "animation.hpp"
+#include "consts.hpp"
 #include "collider.hpp"
 
 class Pacman : public sf::RectangleShape {
@@ -15,7 +16,7 @@ public:
 
     void update(float deltaTime, const sf::Vector2f& targetPosition);
 
-    void onCollision(const sf::Vector2f& direction);
+    void onCollision(Direction dir);
 
     Collider getCollider();
 

@@ -25,12 +25,6 @@ public:
     void drawLight(const sf::Vector2f& playerPos, sf::RenderWindow& window);
 
 private:
-    enum class Direction {
-        NORTH,
-        SOUTH,
-        EAST,
-        WEST
-    };
 
     struct Edge {
         sf::Vector2f start;

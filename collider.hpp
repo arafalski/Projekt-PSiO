@@ -2,16 +2,15 @@
 #define PROJEKT_COLLIDER_HPP
 
 #include <SFML/Graphics.hpp>
+#include "consts.hpp"
 
 class Collider {
 public:
     explicit Collider(sf::RectangleShape& body);
 
-    ~Collider() = default;
-
     void move(float dx, float dy);
 
-    bool checkCollision(Collider& other, sf::Vector2f& direction);
+    bool checkCollision(Collider& other, Direction& dir);
 
     sf::Vector2f getPosition() const;
 

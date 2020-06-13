@@ -49,12 +49,12 @@ void Pacman::update(float deltaTime, const sf::Vector2f& targetPosition) {
     setTextureRect(m_animation.uvRect);
 }
 
-void Pacman::onCollision(const sf::Vector2f& direction) {
-    if (direction.x != 0.0f) {
+void Pacman::onCollision(Direction dir) {
+    if (dir == Direction::EAST || dir == Direction::WEST) {
         m_velocity.x = 0.0f;
     }
 
-    if (direction.y != 0.0f) {
+    if (dir == Direction::NORTH || dir == Direction::SOUTH) {
         m_velocity.y = 0.0f;
     }
 
