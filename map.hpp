@@ -12,25 +12,19 @@
 
 class Map {
 public:
-    Map(sf::Texture &wallTexture, sf::Texture &startTexture, sf::Texture &endTexture, sf::Texture &pointTexture);
+    Map(sf::Texture& wallTexture, sf::Texture& startTexture, sf::Texture& endTexture, sf::Texture& pointTexture);
 
     ~Map() = default;
 
-    void draw(sf::RenderWindow &window) const;
+    void draw(sf::RenderWindow& window) const;
 
-    void collisionDetection(Pacman &player, bool &endTileHit);
+    void collisionDetection(Pacman& player, bool& endTileHit);
 
-    void checkVisibility(const Pacman &player, const sf::Vector2f &mousePos);
+    void checkVisibility(const Pacman& player, const sf::Vector2f& mousePos);
 
-    void drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window);
+    void drawLight(const sf::Vector2f& playerPos, sf::RenderWindow& window);
 
 private:
-    enum class Direction {
-        NORTH,
-        SOUTH,
-        EAST,
-        WEST
-    };
 
     struct Edge {
         sf::Vector2f start;
@@ -53,9 +47,9 @@ private:
 
     std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
 
-    std::vector<std::vector<char>> mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> &maze);
+    std::vector<std::vector<char>> mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT>& maze);
 
-    void convertTileMapToPolyMap(const std::vector<std::vector<char>> &cells);
+    void convertTileMapToPolyMap(const std::vector<std::vector<char>>& cells);
 
     void addPolyMapBoundary();
 
@@ -63,7 +57,7 @@ private:
 
     float angleCount(sf::Vector2f vec);
 
-    void checkIntersection(float angle, const sf::Vector2f &playerPos);
+    void checkIntersection(float angle, const sf::Vector2f& playerPos);
 };
 
 #endif //PROJEKT_MAP_HPP

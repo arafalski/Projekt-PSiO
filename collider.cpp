@@ -1,52 +1,38 @@
 #include "collider.hpp"
 #include <cmath>
 
-Collider::Collider(sf::RectangleShape &body) : m_body(body) {}
+Collider::Collider(sf::RectangleShape& body) : m_body(body) {}
 
 void Collider::move(float dx, float dy) {
     m_body.move(dx, dy);
 }
 
-bool Collider::checkCollision(Collider &other, sf::Vector2f &direction) {
-    sf::Vector2f otherPosition = other.getPosition();
+bool Collider::checkCollision(Collider& other, Direction& dir) {
     sf::Vector2f otherHalfSize = other.getHalfSize();
-    sf::Vector2f thisPosition = getPosition();
     sf::Vector2f thisHalfSize = getHalfSize();
 
-    float deltaX = otherPosition.x - thisPosition.x;
-    float deltaY = otherPosition.y - thisPosition.y;
+    sf::Vector2f delta = other.getPosition() - getPosition();
 
-    float intersectX = std::abs(deltaX) - (otherHalfSize.x + thisHalfSize.x);
-    float intersectY = std::abs(deltaY) - (otherHalfSize.y + thisHalfSize.y);
+    sf::Vector2f intersect;
+    intersect.x = std::abs(delta.x) - (otherHalfSize.x + thisHalfSize.x);
+    intersect.y = std::abs(delta.y) - (otherHalfSize.y + thisHalfSize.y);
 
-    if (intersectX < 0.0f && intersectY < 0.0f) {
-        if (intersectX > intersectY) {
-            if (deltaX > 0.0f) {
-                move(0.0f, 0.0f);
-                other.move(-intersectX, 0.0f);
-
-                direction.x = 1.0f;
-                direction.y = 0.0f;
+    if (intersect.x < 0.0f && intersect.y < 0.0f) {
+        if (intersect.x > intersect.y) {
+            if (delta.x > 0.0f) {
+                other.move(-intersect.x, 0.0f);
+                dir = Direction::EAST;
             } else {
-                move(0.0f, 0.0f);
-                other.move(intersectX, 0.0f);
-
-                direction.x = -1.0f;
-                direction.y = 0.0f;
+                other.move(intersect.x, 0.0f);
+                dir = Direction::WEST;
             }
         } else {
-            if (deltaY > 0.0f) {
-                move(0.0f, 0.0f);
-                other.move(0.0f, -intersectY);
-
-                direction.x = 0.0f;
-                direction.y = 1.0f;
+            if (delta.y > 0.0f) {
+                other.move(0.0f, -intersect.y);
+                dir = Direction::SOUTH;
             } else {
-                move(0.0f, 0.0f);
-                other.move(0.0f, intersectY);
-
-                direction.x = 0.0f;
-                direction.y = -1.0f;
+                other.move(0.0f, intersect.y);
+                dir = Direction::NORTH;
             }
         }
 

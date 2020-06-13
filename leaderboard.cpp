@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <fstream>
 
-Leaderboard::Leaderboard(const std::string &strPlayingTime) {
+Leaderboard::Leaderboard(const std::string& strPlayingTime) {
     std::fstream leaderboardInputFile("leaderboard.txt", std::ios::in);
 
     if (leaderboardInputFile.is_open()) {

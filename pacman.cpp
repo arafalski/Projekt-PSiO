@@ -4,18 +4,22 @@
 
 #include "consts.hpp"
 
-Pacman::Pacman(sf::Texture *pacmanTexture, const sf::Vector2u &imageCount, float switchTime, float speed,
-               sf::SoundBuffer &soundBuffer)
-        : m_speed(speed), m_animation(pacmanTexture, imageCount, switchTime) {
+Pacman::Pacman(sf::Texture* pacmanTexture, size_t imageCount, float switchTime, float speed,
+               sf::SoundBuffer& soundBuffer)
+        : m_speed(speed), m_imageCount(imageCount), m_switchTime(switchTime) {
     setSize(sf::Vector2f(40.0f, 40.0f));
     setOrigin(getSize() / 2.0f);
     setPosition(TILE, TILE);
     setTexture(pacmanTexture);
 
+    m_textureRect.top = 0;
+    m_textureRect.width = static_cast<int>(pacmanTexture->getSize().x / imageCount);
+    m_textureRect.height = static_cast<int>(pacmanTexture->getSize().y);
+
     m_hitSound.setBuffer(soundBuffer);
 }
 
-void Pacman::update(float deltaTime, const sf::Vector2f &targetPosition) {
+void Pacman::update(float deltaTime, const sf::Vector2f& targetPosition) {
     sf::Vector2f distance = targetPosition - getPosition();
 
     if (distance.x != 0 && distance.y != 0) {
@@ -45,16 +49,31 @@ void Pacman::update(float deltaTime, const sf::Vector2f &targetPosition) {
     move(m_velocity * deltaTime);
     setRotation(angle);
 
-    m_animation.update(deltaTime);
-    setTextureRect(m_animation.uvRect);
+    animationUpdate(deltaTime);
+    setTextureRect(m_textureRect);
 }
 
-void Pacman::onCollision(const sf::Vector2f &direction) {
-    if (direction.x != 0.0f) {
+void Pacman::animationUpdate(float deltaTime) {
+    m_totalTime += deltaTime;
+
+    if (m_totalTime >= m_switchTime) {
+        m_totalTime -= m_switchTime;
+        m_currentImage++;
+
+        if (m_currentImage >= m_imageCount) {
+            m_currentImage = 0;
+        }
+    }
+
+    m_textureRect.left = static_cast<int>(m_currentImage * static_cast<size_t>(m_textureRect.width));
+}
+
+void Pacman::onCollision(Direction dir) {
+    if (dir == Direction::EAST || dir == Direction::WEST) {
         m_velocity.x = 0.0f;
     }
 
-    if (direction.y != 0.0f) {
+    if (dir == Direction::NORTH || dir == Direction::SOUTH) {
         m_velocity.y = 0.0f;
     }
 

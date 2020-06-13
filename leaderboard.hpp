@@ -6,7 +6,7 @@
 
 class Leaderboard {
 public:
-    explicit Leaderboard(const std::string &strPlayingTime);
+    explicit Leaderboard(const std::string& strPlayingTime);
 
     std::vector<float> getBestTimes() const;
 

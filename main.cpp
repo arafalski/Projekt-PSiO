@@ -37,7 +37,7 @@ int main() {
     try {
         Configuration::loadTextures(textures);
     }
-    catch (std::invalid_argument &except) {
+    catch (std::invalid_argument& except) {
         std::cerr << except.what() << '\n';
         return EXIT_FAILURE;
     }
@@ -51,12 +51,12 @@ int main() {
     try {
         Configuration::loadSoundBuffer(hitSoundBuffer);
     }
-    catch (std::invalid_argument &except) {
+    catch (std::invalid_argument& except) {
         std::cerr << except.what() << '\n';
         return EXIT_FAILURE;
     }
 
-    Pacman player(&textures["pacman"], sf::Vector2u(2, 1), 0.15f, 200.0f, hitSoundBuffer);
+    Pacman player(&textures["pacman"], 2, 0.15f, 200.0f, hitSoundBuffer);
     view.setCenter(player.getPosition());
 
     Map tileMap(textures["wall"], textures["start"], textures["end"], textures["point"]);

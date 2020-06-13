@@ -7,4 +7,11 @@ constexpr auto TILE = 80.0f;
 constexpr auto MAP_WIDTH = 10;
 constexpr auto MAP_HEIGHT = MAP_WIDTH;
 
+enum class Direction {
+    NORTH,
+    SOUTH,
+    EAST,
+    WEST
+};
+
 #endif //PROJEKT_CONSTS_HPP

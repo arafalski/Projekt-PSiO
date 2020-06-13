@@ -10,7 +10,7 @@
 #include <stack>
 #include <thread>
 
-Map::Map(sf::Texture &wallTexture, sf::Texture &startTexture, sf::Texture &endTexture, sf::Texture &pointTexture) {
+Map::Map(sf::Texture& wallTexture, sf::Texture& startTexture, sf::Texture& endTexture, sf::Texture& pointTexture) {
     std::vector<std::vector<char>> cells = mazeToChar(generateTilesPlacement());
     std::thread convToPolyThread(&Map::convertTileMapToPolyMap, this, cells);
 
@@ -69,35 +69,39 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
 
         if (!neighbours.empty()) {
             Direction nextDir = neighbours[generator() % neighbours.size()];
+            sf::Vector2u actualCell = backtrack.top();
+            sf::Vector2u nextCell = backtrack.top();
+            sf::Vector2u index;
 
             switch (nextDir) {
                 case Direction::NORTH:
-                    maze[backtrack.top().y][backtrack.top().x].grid[0][1] = ' ';
-                    backtrack.push(sf::Vector2u(backtrack.top().x, backtrack.top().y - 1));
-                    maze[backtrack.top().y][backtrack.top().x].visit();
-                    visitedCells++;
+                    index.x = 1;
+                    index.y = 0;
+                    nextCell.y--;
                     break;
                 case Direction::SOUTH:
-                    maze[backtrack.top().y + 1][backtrack.top().x].grid[0][1] = ' ';
-                    backtrack.push(sf::Vector2u(backtrack.top().x, backtrack.top().y + 1));
-                    maze[backtrack.top().y][backtrack.top().x].visit();
-                    visitedCells++;
+                    index.x = 1;
+                    index.y = 0;
+                    actualCell.y++;
+                    nextCell.y++;
                     break;
                 case Direction::EAST:
-                    maze[backtrack.top().y][backtrack.top().x + 1].grid[1][0] = ' ';
-                    backtrack.push(sf::Vector2u(backtrack.top().x + 1, backtrack.top().y));
-                    maze[backtrack.top().y][backtrack.top().x].visit();
-                    visitedCells++;
+                    index.x = 0;
+                    index.y = 1;
+                    actualCell.x++;
+                    nextCell.x++;
                     break;
                 case Direction::WEST:
-                    maze[backtrack.top().y][backtrack.top().x].grid[1][0] = ' ';
-                    backtrack.push(sf::Vector2u(backtrack.top().x - 1, backtrack.top().y));
-                    maze[backtrack.top().y][backtrack.top().x].visit();
-                    visitedCells++;
-                    break;
-                default:
+                    index.x = 0;
+                    index.y = 1;
+                    nextCell.x--;
                     break;
             }
+
+            maze[actualCell.y][actualCell.x].grid[index.y][index.x] = ' ';
+            backtrack.push(nextCell);
+            maze[backtrack.top().y][backtrack.top().x].visit();
+            visitedCells++;
         } else {
             if (backtrack.size() >= longestPath) {
                 longestPath = backtrack.size();
@@ -112,19 +116,19 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
     return maze;
 }
 
-std::vector<std::vector<char>> Map::mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> &maze) {
+std::vector<std::vector<char>> Map::mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT>& maze) {
     std::vector<std::vector<char>> cells;
 
-    for (auto &row : maze) {
+    for (auto& row : maze) {
         std::vector<char> temp;
-        for (auto &cell : row) {
+        for (auto& cell : row) {
             temp.emplace_back(cell.grid[0][0]);
             temp.emplace_back(cell.grid[0][1]);
         }
         temp.emplace_back('#');
 
         std::vector<char> temp2;
-        for (auto &cell : row) {
+        for (auto& cell : row) {
             temp2.emplace_back(cell.grid[1][0]);
             temp2.emplace_back(cell.grid[1][1]);
         }
@@ -139,14 +143,14 @@ std::vector<std::vector<char>> Map::mazeToChar(const std::array<std::array<Cell,
     return cells;
 }
 
-void Map::draw(sf::RenderWindow &window) const {
-    for (const auto &cell : m_mapGrid) {
+void Map::draw(sf::RenderWindow& window) const {
+    for (const auto& cell : m_mapGrid) {
         cell.drawSprite(window);
     }
 }
 
-void Map::collisionDetection(Pacman &player, bool &endTileHit) {
-    sf::Vector2f direction;
+void Map::collisionDetection(Pacman& player, bool& endTileHit) {
+    Direction dir;
     Collider playerCollider = player.getCollider();
 
     auto hitPointIt = m_mapGrid.end();
@@ -154,8 +158,8 @@ void Map::collisionDetection(Pacman &player, bool &endTileHit) {
     for (std::size_t i = 0; i < m_mapGrid.size(); i++) {
         Collider boxCollider = m_mapGrid[i].getCollider();
 
-        if (m_mapGrid[i].getFunction() == '#' && boxCollider.checkCollision(playerCollider, direction)) {
-            player.onCollision(direction);
+        if (m_mapGrid[i].getFunction() == '#' && boxCollider.checkCollision(playerCollider, dir)) {
+            player.onCollision(dir);
             player.duringCollision = true;
             hitWall = true;
         } else if (m_mapGrid[i].getFunction() == 'e' &&
@@ -205,14 +209,14 @@ void Map::addPolyMapBoundary() {
     m_edges.emplace_back(Left);
 }
 
-void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>> &cellInChars) {
+void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>>& cellInChars) {
     std::mutex m;
     const std::lock_guard<std::mutex> lock(m);
     std::vector<std::vector<polyCell>> cells;
 
-    for (const auto &row : cellInChars) {
+    for (const auto& row : cellInChars) {
         std::vector<polyCell> temp;
-        for (const auto &x :row) {
+        for (const auto& x :row) {
             polyCell cell;
             if (x == '#') cell.exist = true;
             temp.emplace_back(cell);
@@ -323,7 +327,7 @@ float Map::angleCount(sf::Vector2f vec) {
     return angle;
 }
 
-void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
+void Map::checkVisibility(const Pacman& player, const sf::Vector2f& mousePos) {
     m_visiblePolyPoints.clear();
     auto playerPos = player.getPosition();
     auto toCursor = mousePos - playerPos;
@@ -336,7 +340,7 @@ void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
 
     std::vector<float> visibleAngles{firstAngle, secondAngle};
 
-    for (const auto &edge : m_edges) {
+    for (const auto& edge : m_edges) {
         for (int i = 0; i < 2; i++) {
             sf::Vector2f point((i == 0 ? edge.start.x : edge.end.x) - playerPos.x,
                                (i == 0 ? edge.start.y : edge.end.y) - playerPos.y);
@@ -354,14 +358,14 @@ void Map::checkVisibility(const Pacman &player, const sf::Vector2f &mousePos) {
         }
     }
 
-    for (const auto &angle : visibleAngles) {
+    for (const auto& angle : visibleAngles) {
         checkIntersection(angle, playerPos);
     }
 
     sortAndEraseDuplicatesVisiblePoints();
 }
 
-void Map::checkIntersection(float angle, const sf::Vector2f &playerPos) {
+void Map::checkIntersection(float angle, const sf::Vector2f& playerPos) {
     for (int j = 0; j < 3; j++) {
         if (j == 1) angle -= 0.0001f;
         if (j == 2) angle += 0.0002f;
@@ -375,7 +379,7 @@ void Map::checkIntersection(float angle, const sf::Vector2f &playerPos) {
         float rayAngle;
         bool hitSomething = false;
 
-        for (const auto &edge2 : m_edges) {
+        for (const auto& edge2 : m_edges) {
             sf::Vector2f segment(edge2.end.x - edge2.start.x,
                                  edge2.end.y - edge2.start.y);
 
@@ -403,13 +407,13 @@ void Map::checkIntersection(float angle, const sf::Vector2f &playerPos) {
 }
 
 void Map::sortAndEraseDuplicatesVisiblePoints() {
-    auto sortAngles = [](const auto &lhs, const auto &rhs) {
+    auto sortAngles = [](const auto& lhs, const auto& rhs) {
         return lhs.first < rhs.first;
     };
 
     if (m_visiblePolyPoints[0].first >= 260.0f && m_visiblePolyPoints[4].first <= 100.0f) {
         auto firstConvex = std::partition(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(),
-                                          [](const auto &el) { return el.first > 180.0f; });
+                                          [](const auto& el) { return el.first > 180.0f; });
 
         std::sort(m_visiblePolyPoints.begin(), firstConvex, sortAngles);
         std::sort(firstConvex, m_visiblePolyPoints.end(), sortAngles);
@@ -418,7 +422,7 @@ void Map::sortAndEraseDuplicatesVisiblePoints() {
     }
 
     auto it = std::unique(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(),
-                          [](const auto &p1, const auto &p2) {
+                          [](const auto& p1, const auto& p2) {
                               return std::abs(p1.second.x - p2.second.x) < 0.1f &&
                                      std::abs(p1.second.y - p2.second.y) < 0.1f;
                           });
@@ -426,17 +430,20 @@ void Map::sortAndEraseDuplicatesVisiblePoints() {
     m_visiblePolyPoints.erase(it, m_visiblePolyPoints.end());
 }
 
-void Map::drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window) {
+void Map::drawLight(const sf::Vector2f& playerPos, sf::RenderWindow& window) {
     sf::VertexArray light(sf::TriangleFan, m_visiblePolyPoints.size() + 1);
-    sf::Color lightColor(255, 202, 3, 80);
+    uint8_t r = 255, g = 202, b = 3, alpha = 200;
 
     if (!m_visiblePolyPoints.empty()) {
         light[0].position = playerPos;
-        light[0].color = lightColor;
+        light[0].color = sf::Color(r, g, b, alpha);
 
         for (std::size_t i = 0; i < m_visiblePolyPoints.size(); i++) {
+            float distToPlayer = sqrtf(powf(m_visiblePolyPoints[i].second.x - playerPos.x, 2) +
+                                       powf(m_visiblePolyPoints[i].second.y - playerPos.y, 2));
+
             light[i + 1].position = m_visiblePolyPoints[i].second;
-            light[i + 1].color = lightColor;
+            light[i + 1].color = sf::Color(r, g, b, static_cast<uint8_t>(log10f(distToPlayer / 100) / alpha));
         }
     }
 
