@@ -7,7 +7,7 @@ class Animation {
 public:
     sf::IntRect uvRect;
 
-    Animation(sf::Texture *texture, sf::Vector2u imageCount, float switchTime);
+    Animation(sf::Texture* texture, sf::Vector2u imageCount, float switchTime);
 
     void update(float deltaTime, unsigned int row = 0);
 

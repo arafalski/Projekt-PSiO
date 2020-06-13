@@ -7,7 +7,7 @@
 #include "configuration.hpp"
 #include "leaderboard.hpp"
 
-void Screens::mainMenu(sf::RenderWindow &window, const sf::Font &font) {
+void Screens::mainMenu(sf::RenderWindow& window, const sf::Font& font) {
     sf::Text gameName;
     Configuration::textConfig(gameName, font, "Pacman Maze", 100, sf::Color::Green);
     gameName.setPosition(static_cast<float>(window.getSize().x) / 2.0f - gameName.getGlobalBounds().width / 2.0f,
@@ -64,8 +64,8 @@ void Screens::mainMenu(sf::RenderWindow &window, const sf::Font &font) {
     }
 }
 
-void Screens::finalScreen(sf::RenderWindow &window, const sf::Font &font,
-                          const std::string &strPlayingTime) {
+void Screens::finalScreen(sf::RenderWindow& window, const sf::Font& font,
+                          const std::string& strPlayingTime) {
     window.create(sf::VideoMode(450, 520), "Pacman Maze", sf::Style::Close);
 
     sf::Text victoryText;
@@ -84,7 +84,7 @@ void Screens::finalScreen(sf::RenderWindow &window, const sf::Font &font,
     auto topTimes = leaderboard.getBestTimes();
 
     std::string bestTimes = "Best times:\n";
-    for (auto &time : topTimes) {
+    for (auto& time : topTimes) {
         std::string strTime = std::to_string(time);
         bestTimes += strTime.substr(0, strTime.find('.') + 3);
         bestTimes += "s\n";

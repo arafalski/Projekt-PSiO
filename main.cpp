@@ -37,7 +37,7 @@ int main() {
     try {
         Configuration::loadTextures(textures);
     }
-    catch (std::invalid_argument &except) {
+    catch (std::invalid_argument& except) {
         std::cerr << except.what() << '\n';
         return EXIT_FAILURE;
     }
@@ -51,7 +51,7 @@ int main() {
     try {
         Configuration::loadSoundBuffer(hitSoundBuffer);
     }
-    catch (std::invalid_argument &except) {
+    catch (std::invalid_argument& except) {
         std::cerr << except.what() << '\n';
         return EXIT_FAILURE;
     }

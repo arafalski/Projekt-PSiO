@@ -6,13 +6,13 @@
 
 class Tile : public sf::RectangleShape {
 public:
-    Tile(sf::Texture &tileTexture, char function, const sf::Vector2f &position);
+    Tile(sf::Texture& tileTexture, char function, const sf::Vector2f& position);
 
     Collider getCollider();
 
     char getFunction() const;
 
-    void drawSprite(sf::RenderWindow &window) const;
+    void drawSprite(sf::RenderWindow& window) const;
 
 private:
     char m_function;

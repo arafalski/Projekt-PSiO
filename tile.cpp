@@ -2,7 +2,7 @@
 
 #include "consts.hpp"
 
-Tile::Tile(sf::Texture &tileTexture, char function, const sf::Vector2f &position) : m_function(function) {
+Tile::Tile(sf::Texture& tileTexture, char function, const sf::Vector2f& position) : m_function(function) {
     setPosition(position);
 
     m_tileSprite.setTexture(tileTexture);
@@ -36,6 +36,6 @@ char Tile::getFunction() const {
     return m_function;
 }
 
-void Tile::drawSprite(sf::RenderWindow &window) const {
+void Tile::drawSprite(sf::RenderWindow& window) const {
     window.draw(m_tileSprite);
 }

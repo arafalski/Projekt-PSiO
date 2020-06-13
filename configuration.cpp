@@ -2,16 +2,16 @@
 
 #include <stdexcept>
 
-void Configuration::textConfig(sf::Text &text, const sf::Font &font, const std::string &textToWrite,
+void Configuration::textConfig(sf::Text& text, const sf::Font& font, const std::string& textToWrite,
                                unsigned int characterSize,
-                               const sf::Color &color) {
+                               const sf::Color& color) {
     text.setFont(font);
     text.setString(textToWrite);
     text.setCharacterSize(characterSize);
     text.setFillColor(color);
 }
 
-void Configuration::loadTextures(std::map<std::string, sf::Texture> &textureMap) {
+void Configuration::loadTextures(std::map<std::string, sf::Texture>& textureMap) {
     textureMap.insert({"pacman", sf::Texture()});
     if (!textureMap["pacman"].loadFromFile("../Assets/Images/pacman.png")) {
         throw std::invalid_argument("Couldn't load a pacman's texture");
@@ -45,7 +45,7 @@ void Configuration::loadTextures(std::map<std::string, sf::Texture> &textureMap)
     }
 }
 
-void Configuration::loadSoundBuffer(sf::SoundBuffer &soundBufferToLoad) {
+void Configuration::loadSoundBuffer(sf::SoundBuffer& soundBufferToLoad) {
     if (!soundBufferToLoad.loadFromFile("../Assets/Audio/impact.ogg")) {
         throw std::invalid_argument("Couldn't load audio file");
     }

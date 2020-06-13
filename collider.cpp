@@ -1,13 +1,13 @@
 #include "collider.hpp"
 #include <cmath>
 
-Collider::Collider(sf::RectangleShape &body) : m_body(body) {}
+Collider::Collider(sf::RectangleShape& body) : m_body(body) {}
 
 void Collider::move(float dx, float dy) {
     m_body.move(dx, dy);
 }
 
-bool Collider::checkCollision(Collider &other, sf::Vector2f &direction) {
+bool Collider::checkCollision(Collider& other, sf::Vector2f& direction) {
     sf::Vector2f otherPosition = other.getPosition();
     sf::Vector2f otherHalfSize = other.getHalfSize();
     sf::Vector2f thisPosition = getPosition();
