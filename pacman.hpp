@@ -3,18 +3,18 @@
 
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
-#include "animation.hpp"
-#include "consts.hpp"
 #include "collider.hpp"
+#include "consts.hpp"
 
 class Pacman : public sf::RectangleShape {
 public:
-    Pacman(sf::Texture* pacmanTexture, const sf::Vector2u& imageCount, float switchTime, float speed,
-           sf::SoundBuffer& soundBuffer);
+    Pacman(sf::Texture* pacmanTexture, size_t imageCount, float switchTime, float speed, sf::SoundBuffer& soundBuffer);
 
     ~Pacman() override = default;
 
     void update(float deltaTime, const sf::Vector2f& targetPosition);
+
+    void animationUpdate(float deltaTime);
 
     void onCollision(Direction dir);
 
@@ -27,9 +27,17 @@ private:
 
     sf::Vector2f m_velocity;
 
-    Animation m_animation;
-
     sf::Sound m_hitSound;
+
+    size_t m_imageCount;
+
+    size_t m_currentImage = 0;
+
+    float m_totalTime;
+
+    float m_switchTime;
+
+    sf::IntRect m_textureRect;
 };
 
 
