@@ -432,15 +432,18 @@ void Map::sortAndEraseDuplicatesVisiblePoints() {
 
 void Map::drawLight(const sf::Vector2f &playerPos, sf::RenderWindow &window) {
     sf::VertexArray light(sf::TriangleFan, m_visiblePolyPoints.size() + 1);
-    sf::Color lightColor(255, 202, 3, 80);
+    uint8_t r = 255, g = 202, b = 3, alpha = 200;
 
     if (!m_visiblePolyPoints.empty()) {
         light[0].position = playerPos;
-        light[0].color = lightColor;
+        light[0].color = sf::Color(r, g, b, alpha);
 
         for (std::size_t i = 0; i < m_visiblePolyPoints.size(); i++) {
+            float distToPlayer = sqrtf(powf(m_visiblePolyPoints[i].second.x - playerPos.x, 2) +
+                                       powf(m_visiblePolyPoints[i].second.y - playerPos.y, 2));
+
             light[i + 1].position = m_visiblePolyPoints[i].second;
-            light[i + 1].color = lightColor;
+            light[i + 1].color = sf::Color(r, g, b, static_cast<uint8_t>(log10f(distToPlayer / 100) / alpha));
         }
     }
 
