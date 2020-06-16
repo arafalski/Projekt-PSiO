@@ -216,7 +216,7 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>>& cellInCh
 
     for (const auto& row : cellInChars) {
         std::vector<polyCell> temp;
-        for (const auto& x :row) {
+        for (const auto x :row) {
             polyCell cell;
             if (x == '#') cell.exist = true;
             temp.emplace_back(cell);
