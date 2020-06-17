@@ -14,8 +14,6 @@ class Map {
 public:
     Map(sf::Texture& wallTexture, sf::Texture& startTexture, sf::Texture& endTexture, sf::Texture& pointTexture);
 
-    ~Map() = default;
-
     void draw(sf::RenderWindow& window) const;
 
     void collisionDetection(Pacman& player, bool& endTileHit);
@@ -32,10 +30,10 @@ private:
     };
 
     struct polyCell {
-        std::map<Direction, std::pair<std::size_t, bool>> edge{{Direction::NORTH, std::make_pair(0, false)},
-                                                               {Direction::SOUTH, std::make_pair(0, false)},
-                                                               {Direction::EAST,  std::make_pair(0, false)},
-                                                               {Direction::WEST,  std::make_pair(0, false)}};
+        std::map<Direction, std::pair<size_t, bool>> edge{{Direction::NORTH, {0, false}},
+                                                          {Direction::SOUTH, {0, false}},
+                                                          {Direction::EAST,  {0, false}},
+                                                          {Direction::WEST,  {0, false}}};
         bool exist = false;
     };
 
@@ -43,7 +41,7 @@ private:
 
     std::vector<Edge> m_edges;
 
-    std::vector<std::pair<float, sf::Vector2f>> m_visiblePolyPoints; //angle, x, y
+    std::vector<std::pair<float, sf::Vector2f>> m_visiblePolyPoints;
 
     std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
 
