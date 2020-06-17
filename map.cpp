@@ -43,9 +43,10 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
     std::mt19937 generator(
             static_cast<unsigned int>(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
 
-    std::size_t longestPath = 0;
+    size_t longestPath = 0;
     sf::Vector2u endCell;
 
+    //Adding starting point
     backtrack.push(sf::Vector2u(0, 0));
     visitedCells = 1;
     maze[0][0].visit();
@@ -53,19 +54,21 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
 
     do {
         std::vector<Direction> neighbours;
+        neighbours.reserve(4);
 
         if (backtrack.top().y > 0 && !maze[backtrack.top().y - 1][backtrack.top().x].wasVisited()) {
-            neighbours.emplace_back(Direction::NORTH);
+            neighbours.push_back(Direction::NORTH);
         }
         if (backtrack.top().y < MAP_HEIGHT - 1 && !maze[backtrack.top().y + 1][backtrack.top().x].wasVisited()) {
-            neighbours.emplace_back(Direction::SOUTH);
+            neighbours.push_back(Direction::SOUTH);
         }
         if (backtrack.top().x < MAP_WIDTH - 1 && !maze[backtrack.top().y][backtrack.top().x + 1].wasVisited()) {
-            neighbours.emplace_back(Direction::EAST);
+            neighbours.push_back(Direction::EAST);
         }
         if (backtrack.top().x > 0 && !maze[backtrack.top().y][backtrack.top().x - 1].wasVisited()) {
-            neighbours.emplace_back(Direction::WEST);
+            neighbours.push_back(Direction::WEST);
         }
+        neighbours.shrink_to_fit();
 
         if (!neighbours.empty()) {
             Direction nextDir = neighbours[generator() % neighbours.size()];
@@ -118,9 +121,12 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
 
 std::vector<std::vector<char>> Map::mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT>& maze) {
     std::vector<std::vector<char>> cells;
+    cells.reserve(MAP_HEIGHT * 2 + 1);
 
     for (auto& row : maze) {
         std::vector<char> temp;
+        temp.reserve(MAP_WIDTH * 2 + 1);
+
         for (auto& cell : row) {
             temp.emplace_back(cell.grid[0][0]);
             temp.emplace_back(cell.grid[0][1]);
@@ -128,6 +134,8 @@ std::vector<std::vector<char>> Map::mazeToChar(const std::array<std::array<Cell,
         temp.emplace_back('#');
 
         std::vector<char> temp2;
+        temp2.reserve(MAP_WIDTH * 2 + 1);
+
         for (auto& cell : row) {
             temp2.emplace_back(cell.grid[1][0]);
             temp2.emplace_back(cell.grid[1][1]);
@@ -234,17 +242,18 @@ void Map::convertTileMapToPolyMap(const std::vector<std::vector<char>>& cellInCh
                 if (cells[edgeOwner.y][edgeOwner.x].edge[dir].second) {
                     if (dir == Direction::WEST || dir == Direction::EAST) {
                         m_edges[cells[edgeOwner.y][edgeOwner.x].edge[dir].first].end.y += TILE;
-                    } else { m_edges[cells[edgeOwner.y][edgeOwner.x].edge[dir].first].end.x += TILE; };
+                    } else {
+                        m_edges[cells[edgeOwner.y][edgeOwner.x].edge[dir].first].end.x += TILE;
+                    };
                     cells[i][j].edge[dir].first = cells[edgeOwner.y][edgeOwner.x].edge[dir].first;
                     cells[i][j].edge[dir].second = true;
                 } else {
-                    Edge edge;
-                    edge.start.x = static_cast<float>(startOffset.x) * TILE - TILE / 2;
-                    edge.start.y = static_cast<float>(startOffset.y) * TILE - TILE / 2;
-                    edge.end.x = edge.start.x + TILE * endOffset.x;
-                    edge.end.y = edge.start.y + TILE * endOffset.y;
+                    m_edges.emplace_back(Edge());
+                    m_edges.back().start.x = static_cast<float>(startOffset.x) * TILE - TILE / 2;
+                    m_edges.back().start.y = static_cast<float>(startOffset.y) * TILE - TILE / 2;
+                    m_edges.back().end.x = m_edges.back().start.x + TILE * endOffset.x;
+                    m_edges.back().end.y = m_edges.back().start.y + TILE * endOffset.y;
 
-                    m_edges.emplace_back(edge);
                     cells[i][j].edge[dir].first = m_edges.size() - 1;
                     cells[i][j].edge[dir].second = true;
                 }
@@ -336,29 +345,26 @@ void Map::checkIntersection(float angle, const sf::Vector2f& playerPos) {
         float rayAngle;
         bool hitSomething = false;
 
-        for (const auto& edge2 : m_edges) {
-            sf::Vector2f segment(edge2.end.x - edge2.start.x,
-                                 edge2.end.y - edge2.start.y);
+        for (const auto& edge : m_edges) {
+            sf::Vector2f segment(edge.end.x - edge.start.x,
+                                 edge.end.y - edge.start.y);
 
             if (std::abs(segment.x - ray.x) > 0.0f && std::abs(segment.y - ray.y) > 0.0f) {
-                float t2 =
-                        (ray.x * (edge2.start.y - playerPos.y) + (ray.y * (playerPos.x - edge2.start.x))) /
-                        (segment.x * ray.y - segment.y * ray.x);
-                float t1 = (edge2.start.x + segment.x * t2 - playerPos.x) / ray.x;
+                float t2 = (ray.x * (edge.start.y - playerPos.y) +
+                            (ray.y * (playerPos.x - edge.start.x))) / (segment.x * ray.y - segment.y * ray.x);
+                float t1 = (edge.start.x + segment.x * t2 - playerPos.x) / ray.x;
 
-                if (t1 > 0.0f && t2 >= 0.0f && t2 <= 1.0f) {
-                    if (t1 < min_t1) {
-                        min_t1 = t1;
-                        rayEndPoint.x = playerPos.x + ray.x * t1;
-                        rayEndPoint.y = playerPos.y + ray.y * t1;
-                        rayAngle = angleCount(rayEndPoint - playerPos);
-                        hitSomething = true;
-                    }
+                if (t1 > 0.0f && t2 >= 0.0f && t2 <= 1.0f && t1 < min_t1) {
+                    min_t1 = t1;
+                    rayEndPoint.x = playerPos.x + ray.x * t1;
+                    rayEndPoint.y = playerPos.y + ray.y * t1;
+                    rayAngle = angleCount(rayEndPoint - playerPos);
+                    hitSomething = true;
                 }
             }
         }
         if (hitSomething) {
-            m_visiblePolyPoints.emplace_back(std::make_pair(rayAngle, rayEndPoint));
+            m_visiblePolyPoints.emplace_back(rayAngle, rayEndPoint);
         }
     }
 }
