@@ -392,21 +392,26 @@ void Map::sortAndEraseDuplicatesVisiblePoints() {
 
     m_visiblePolyPoints.erase(it, m_visiblePolyPoints.end());
 }
-
+#include <iostream>
 void Map::drawLight(const sf::Vector2f& playerPos, sf::RenderWindow& window) {
     sf::VertexArray light(sf::TriangleFan, m_visiblePolyPoints.size() + 1);
-    uint8_t r = 255, g = 202, b = 3, alpha = 200;
+    uint8_t r = 255, g = 202, b = 3, alpha = 250;
 
     if (!m_visiblePolyPoints.empty()) {
         light[0].position = playerPos;
         light[0].color = sf::Color(r, g, b, alpha);
 
         for (std::size_t i = 0; i < m_visiblePolyPoints.size(); i++) {
-            float distToPlayer = sqrtf(powf(m_visiblePolyPoints[i].second.x - playerPos.x, 2) +
-                                       powf(m_visiblePolyPoints[i].second.y - playerPos.y, 2));
+            int distToPlayer = static_cast<int>(sqrtf(powf(m_visiblePolyPoints[i].second.x - playerPos.x, 2) +
+                                                      powf(m_visiblePolyPoints[i].second.y - playerPos.y, 2)));
 
             light[i + 1].position = m_visiblePolyPoints[i].second;
-            light[i + 1].color = sf::Color(r, g, b, static_cast<uint8_t>(log10f(distToPlayer / 100) / alpha));
+            auto newAlpha = static_cast<float>((-200 / 150) * distToPlayer + alpha);
+            if(newAlpha < 0){
+                newAlpha = 0.0f;
+            }
+            std::cout << newAlpha << '\n';
+            light[i + 1].color = sf::Color(r, g, b, static_cast<uint8_t>(newAlpha));
         }
     }
 
