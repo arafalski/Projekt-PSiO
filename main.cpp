@@ -116,7 +116,7 @@ int main() {
             Screens::finalScreen(window, font, strPlayingTime);
         }
 
-        tileMap.checkVisibility(player, mousePos);
+        tileMap.getLight().checkVisibility(player, mousePos);
 
         view.setCenter(player.getPosition());
         timeText.setPosition(player.getPosition().x + 20.0f, player.getPosition().y);
@@ -124,7 +124,7 @@ int main() {
         window.setView(view);
         window.draw(background);
         tileMap.draw(window);
-        tileMap.drawLight(player.getPosition(), window);
+        tileMap.getLight().drawLight(player.getPosition(), window);
         window.draw(player);
         window.draw(timeText);
         window.display();

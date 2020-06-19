@@ -5,15 +5,12 @@
 
 class Cell {
 public:
-    std::array<std::array<char, 2>, 2> grid{{{'#', '#'}, {'#', ' '}}};
+    std::array<std::array<char, 2>, 2> grid{{{'#', '#'},
+                                             {'#', ' '}}};
 
-    void visit() {
-        visited = true;
-    }
+    void visit() { visited = true; }
 
-    bool wasVisited() const {
-        return visited;
-    }
+    bool wasVisited() const { return visited; }
 
 private:
     bool visited = false;
