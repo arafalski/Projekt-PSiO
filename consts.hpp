@@ -14,6 +14,6 @@ enum class Direction {
     WEST
 };
 
-constexpr auto LIGHT_DEBUG = true;
+constexpr auto LIGHT_DEBUG = false;
 
 #endif //PROJEKT_CONSTS_HPP
