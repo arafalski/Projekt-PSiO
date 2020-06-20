@@ -67,9 +67,10 @@ void Screens::mainMenu(sf::RenderWindow& window, const sf::Font& font) {
 void Screens::finalScreen(sf::RenderWindow& window, const sf::Font& font,
                           const std::string& strPlayingTime) {
     window.create(sf::VideoMode(450, 520), "Pacman Maze", sf::Style::Close);
+    window.setFramerateLimit(30);
 
     sf::Text victoryText;
-    Configuration::textConfig(victoryText, font, "Win!!!", 100, sf::Color::Red);
+    Configuration::textConfig(victoryText, font, "Victory!!!", 100, sf::Color::Red);
     victoryText.setPosition(static_cast<float>(window.getSize().x) / 2.0f - victoryText.getGlobalBounds().width / 2.0f,
                             0.0f);
 
