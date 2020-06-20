@@ -162,10 +162,10 @@ void Light::checkIntersection(float angle, const sf::Vector2f& playerPos) {
 
             if (std::abs(segment.x - ray.x) > 0.0f && std::abs(segment.y - ray.y) > 0.0f) {
                 auto t2 = (ray.x * (edge.start.y - playerPos.y) + (ray.y * (playerPos.x - edge.start.x)))
-                           / (ray.y * segment.x - ray.x * segment.y);
+                          / (ray.y * segment.x - ray.x * segment.y);
                 auto t1 = (edge.start.x - playerPos.x + segment.x * t2) / ray.x;
 
-                if (t1 > 0.0f && t2 > 0.0f && t2 < 1.0f && t1 < minT1) {
+                if (t1 > 0.0f && t2 >= 0.0f && t2 <= 1.0f && t1 < minT1) {
                     minT1 = t1;
                     rayEndPoint.x = playerPos.x + ray.x * t1;
                     rayEndPoint.y = playerPos.y + ray.y * t1;
@@ -175,6 +175,12 @@ void Light::checkIntersection(float angle, const sf::Vector2f& playerPos) {
             }
         }
         if (hitSomething) {
+            sf::Vector2f fromPlayer = rayEndPoint - playerPos;
+            auto lengthOfRay = sqrtf(fromPlayer.x * fromPlayer.x + fromPlayer.y * fromPlayer.y);
+            if (lengthOfRay > MAX_RADIUS) {
+                fromPlayer = (fromPlayer / lengthOfRay) * MAX_RADIUS;
+                rayEndPoint = playerPos + fromPlayer;
+            }
             m_visiblePolyPoints.emplace_back(rayAngle, rayEndPoint);
         }
     }
@@ -197,8 +203,8 @@ void Light::sortAndEraseDuplicatesVisiblePoints() {
     }
 
     auto it = std::unique(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(), [](const auto& lhs, const auto& rhs) {
-        return std::abs(lhs.second.x - rhs.second.x) < 0.1f &&
-               std::abs(lhs.second.y - rhs.second.y) < 0.1f;
+        return std::abs(lhs.second.x - rhs.second.x) < 1.f &&
+               std::abs(lhs.second.y - rhs.second.y) < 1.f;
     });
 
     m_visiblePolyPoints.erase(it, m_visiblePolyPoints.end());
@@ -212,13 +218,20 @@ void Light::drawLight(const sf::Vector2f& playerPos, sf::RenderWindow& window) {
         light[0].position = playerPos;
         light[0].color = sf::Color(r, g, b, alpha);
 
-        for (std::size_t i = 0; i < m_visiblePolyPoints.size(); i++) {
+        for (size_t i = 0; i < m_visiblePolyPoints.size(); i++) {
             auto distToPlayer = sqrtf(powf(m_visiblePolyPoints[i].second.x - playerPos.x, 2) +
                                       powf(m_visiblePolyPoints[i].second.y - playerPos.y, 2));
 
             light[i + 1].position = m_visiblePolyPoints[i].second;
-            auto newAlpha = static_cast<float>(-3.f * distToPlayer + alpha);
-            if (newAlpha < 0) {
+            if constexpr (LIGHT_DEBUG) {
+                sf::CircleShape circle(5);
+                circle.setOrigin(circle.getRadius(), circle.getRadius());
+                circle.setFillColor(sf::Color::Red);
+                circle.setPosition(light[i + 1].position);
+                window.draw(circle);
+            }
+            auto newAlpha = static_cast<float>(-2.f * distToPlayer + alpha);
+            if (newAlpha < 0.0f) {
                 newAlpha = 0.0f;
             }
             light[i + 1].color = sf::Color(r, g, b, static_cast<uint8_t>(newAlpha));

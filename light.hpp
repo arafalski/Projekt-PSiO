@@ -8,6 +8,10 @@
 #include "consts.hpp"
 #include "pacman.hpp"
 
+namespace {
+    constexpr auto MAX_RADIUS = 150.f;
+}
+
 class Light {
 public:
     Light() = default;
