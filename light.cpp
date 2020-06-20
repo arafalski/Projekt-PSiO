@@ -1,6 +1,7 @@
 #include "light.hpp"
 
 #include <cmath>
+#include <iostream>
 
 Light::Light(const std::vector<std::vector<char>>& cellsInChars) {
     std::vector<std::vector<polyCell>> cells;
@@ -111,32 +112,39 @@ void Light::checkVisibility(const Pacman& player, const sf::Vector2f& mousePos) 
     auto toCursor = mousePos - playerPos;
 
     sf::Vector2f firstBorder(toCursor.x - toCursor.y, toCursor.x + toCursor.y);
-    sf::Vector2f secondBorder(toCursor.x + toCursor.y, toCursor.y - toCursor.x);
-
     auto firstAngle = angleCount(firstBorder);
-    auto secondAngle = angleCount(secondBorder);
 
-    std::vector<float> visibleAngles{firstAngle, secondAngle};
+    std::vector<float> visibleAngles(90);
+    std::generate(visibleAngles.begin(), visibleAngles.end(), [i{firstAngle - 1}]() mutable {
+        if (++i >= 360.f) i = 0.0f;
+        return i;
+    });
 
+    std::vector<float> anglesToCorners;
     for (const auto& edge : m_edges) {
         for (int i = 0; i < 2; i++) {
             sf::Vector2f point((i == 0 ? edge.start.x : edge.end.x) - playerPos.x,
                                (i == 0 ? edge.start.y : edge.end.y) - playerPos.y);
 
             auto base_angle = angleCount(point);
-            if (firstAngle > 270.0f && secondAngle < 90.0f) {
-                if (base_angle < secondAngle || base_angle > firstAngle) {
-                    visibleAngles.emplace_back(base_angle);
+            if (visibleAngles.front() > 270.0f && visibleAngles.back() < 90.0f) {
+                if (base_angle < visibleAngles.back() || base_angle > visibleAngles.front()) {
+                    anglesToCorners.push_back(base_angle);
                 }
             } else {
-                if (base_angle < secondAngle && base_angle > firstAngle) {
-                    visibleAngles.emplace_back(base_angle);
+                if (base_angle < visibleAngles.back() && base_angle > visibleAngles.front()) {
+                    anglesToCorners.push_back(base_angle);
                 }
             }
         }
     }
+    std::copy(anglesToCorners.cbegin(), anglesToCorners.cend(), std::back_inserter(visibleAngles));
+    visibleAngles.emplace_back(firstAngle + 90.f);
+    visibleAngles.shrink_to_fit();
+    anglesToCorners.clear();
+    anglesToCorners.shrink_to_fit();
 
-    for (const auto& angle : visibleAngles) {
+    for (const auto angle : visibleAngles) {
         checkIntersection(angle, playerPos);
     }
 
@@ -191,7 +199,7 @@ void Light::sortAndEraseDuplicatesVisiblePoints() {
         return lhs.first < rhs.first;
     };
 
-    if (m_visiblePolyPoints[0].first > 270.0f && m_visiblePolyPoints[4].first < 90.0f) {
+    if (m_visiblePolyPoints.front().first > 270.0f && m_visiblePolyPoints.back().first < 90.0f) {
         auto firstConvex = std::partition(m_visiblePolyPoints.begin(), m_visiblePolyPoints.end(), [](const auto& el) {
             return el.first > 180.0f;
         });
@@ -212,7 +220,7 @@ void Light::sortAndEraseDuplicatesVisiblePoints() {
 
 void Light::drawLight(const sf::Vector2f& playerPos, sf::RenderWindow& window) {
     sf::VertexArray light(sf::TriangleFan, m_visiblePolyPoints.size() + 1);
-    uint8_t r = 255, g = 202, b = 3, alpha = 250;
+    uint8_t r = 255, g = 202, b = 3, alpha = 200;
 
     if (!m_visiblePolyPoints.empty()) {
         light[0].position = playerPos;
@@ -223,6 +231,8 @@ void Light::drawLight(const sf::Vector2f& playerPos, sf::RenderWindow& window) {
                                       powf(m_visiblePolyPoints[i].second.y - playerPos.y, 2));
 
             light[i + 1].position = m_visiblePolyPoints[i].second;
+
+            //LIGHT DEBUG MODE
             if constexpr (LIGHT_DEBUG) {
                 sf::CircleShape circle(5);
                 circle.setOrigin(circle.getRadius(), circle.getRadius());
@@ -230,12 +240,18 @@ void Light::drawLight(const sf::Vector2f& playerPos, sf::RenderWindow& window) {
                 circle.setPosition(light[i + 1].position);
                 window.draw(circle);
             }
+
             auto newAlpha = static_cast<float>(-2.f * distToPlayer + alpha);
             if (newAlpha < 0.0f) {
                 newAlpha = 0.0f;
             }
             light[i + 1].color = sf::Color(r, g, b, static_cast<uint8_t>(newAlpha));
         }
+    }
+
+    //LIGHT DEBUG MODE
+    if constexpr(LIGHT_DEBUG) {
+        std::cerr << m_visiblePolyPoints.size() << '\n';
     }
 
     window.draw(light);
