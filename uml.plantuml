@@ -1,0 +1,127 @@
+@startuml Projekt PSiO
+
+class Game {
+    +Game()
+    +void runGame()
+    -sf::RenderWindow m_window
+    -sf::View m_view
+    -sf::Image m_icon
+    -sf::Font m_font
+    -sf::Text m_timeText
+    -sf::Sprite m_background
+    -sf::SoundBuffer m_hitSoundBuffer
+    -std::map<std::string, sf::Texture> m_textures
+    -float m_deltaTime
+    -float m_playingTime = 0.0f
+    -bool m_endTileHit = false
+}
+
+class Map {
+    +Map()
+    +void draw(sf::RenderWindow& window) const
+    +void collisionDetection(Pacman& player, bool& endTileHit)
+    +Light& getLight()
+    -std::vector<Tile> m_mapGrid
+    -Light light
+    -void loadMapTolightSystem(const std::vector<std::vector<char>>& cells)
+    -std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement()
+    -std::vector<std::vector<char>> mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT>& maze)
+}
+
+class Light {
+    +Light() = default
+    +explicit Light(const std::vector<std::vector<char>>& cellsInChars)
+    +void checkVisibility(const Pacman& player, const sf::Vector2f& mousePos)
+    +void drawLight(const sf::Vector2f& playerPos, sf::RenderWindow& window)
+    -std::vector<Edge> m_edges
+    -std::vector<std::pair<float, sf::Vector2f>> m_visiblePolyPoints
+    -void addPolyMapBoundary()
+    -float angleCount(sf::Vector2f vec)
+    -void checkIntersection(float angle, const sf::Vector2f& playerPos)
+    -void sortAndEraseDuplicatesVisiblePoints()
+}
+
+class Edge {
+    +sf::Vector2f start
+    +sf::Vector2f end
+}
+
+class polyCell {
+    +std::map<Direction, std::pair<size_t, bool>> edge{
+        {Direction::NORTH, {0, false}},
+        {Direction::SOUTH, {0, false}},
+        {Direction::EAST,  {0, false}},
+        {Direction::WEST,  {0, false}}}
+    +bool exist = false;
+}
+
+class Cell {
+    +std::array<std::array<char, 2>, 2> grid{{{'#', '#'}, {'#', ' '}}};
+    +void visit() { visited = true; }
+    +bool wasVisited() const { return visited; }
+    -bool visited = false;
+}
+
+class Collider {
+    +explicit Collider(sf::RectangleShape& body)
+    +void move(float dx, float dy)
+    +bool checkCollision(Collider& other, Direction& dir)
+    +sf::Vector2f getPosition() const
+    +sf::Vector2f getHalfSize() const
+    -sf::RectangleShape& m_body
+}
+
+class Configuration {
+    +static void textConfig(sf::Text& text, const sf::Font& font, const std::string& textToWrite, unsigned int characterSize, const sf::Color& color)
+    +static void loadTextures(std::map<std::string, sf::Texture>& textureMap)
+    +static void loadSoundBuffer(sf::SoundBuffer& soundBufferToLoad)
+}
+
+class Leaderboard {
+    +explicit Leaderboard(const std::string& strPlayingTime)
+    +std::vector<float> getBestTimes() const
+    -std::vector<float> m_bestTimes
+}
+
+class Pacman <? extends sf::RectangleShape> {
+    +Pacman(sf::Texture* pacmanTexture, size_t imageCount, float switchTime, float speed, sf::SoundBuffer& soundBuffer)
+    +~Pacman() override = default
+    +void update(float deltaTime, const sf::Vector2f& targetPosition)
+    +void animationUpdate(float deltaTime)
+    +void onCollision(Direction dir)
+    +Collider getCollider()
+    +bool duringCollision = false
+
+    -float m_speed
+    -sf::Vector2f m_velocity
+    -sf::Sound m_hitSound
+    -size_t m_imageCount
+    -size_t m_currentImage = 0
+    -float m_totalTime
+    -float m_switchTime
+    -sf::IntRect m_textureRect
+}
+
+class Screens {
+    +static void mainMenu(sf::RenderWindow& window, const sf::Font& font);
+    +static void finalScreen(sf::RenderWindow& window, const sf::Font& font, const std::string& strPlayingTime)
+}
+
+class Tile <? extends sf::RectangleShape> {
+    +Tile(sf::Texture& tileTexture, char function, const sf::Vector2f& position)
+    +Collider getCollider()
+    +char getFunction() const
+    +void drawSprite(sf::RenderWindow& window) const
+    -char m_function
+    -sf::Sprite m_tileSprite
+}
+
+Map "1..1" *-- Light
+Map o-- Cell
+
+Light +-- polyCell
+Light +-- Edge
+
+Pacman "1..1" *-- Collider
+Tile "1..1" *-- Collider
+@enduml
