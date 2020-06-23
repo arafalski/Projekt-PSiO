@@ -28,10 +28,6 @@ Tile::Tile(sf::Texture& tileTexture, char function, const sf::Vector2f& position
     }
 }
 
-Collider Tile::getCollider() {
-    return Collider(*this);
-}
-
 char Tile::getFunction() const {
     return m_function;
 }

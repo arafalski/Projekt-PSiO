@@ -166,14 +166,12 @@ void Map::draw(sf::RenderWindow& window) const {
 
 void Map::collisionDetection(Pacman& player, bool& endTileHit) {
     Direction dir;
-    Collider playerCollider = player.getCollider();
 
     auto hitPointIt = m_mapGrid.end();
     bool hitWall = false;
     for (std::size_t i = 0; i < m_mapGrid.size(); i++) {
-        Collider boxCollider = m_mapGrid[i].getCollider();
 
-        if (m_mapGrid[i].getFunction() == '#' && boxCollider.checkCollision(playerCollider, dir)) {
+        if (m_mapGrid[i].getFunction() == '#' && m_mapGrid[i].checkCollision(player, dir)) {
             player.onCollision(dir);
             player.duringCollision = true;
             hitWall = true;

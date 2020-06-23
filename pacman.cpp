@@ -81,7 +81,3 @@ void Pacman::onCollision(Direction dir) {
         m_hitSound.play();
     }
 }
-
-Collider Pacman::getCollider() {
-    return Collider(*this);
-}

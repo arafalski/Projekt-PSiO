@@ -2,13 +2,11 @@
 #define PROJEKT_TILE_HPP
 
 #include <SFML/Graphics.hpp>
-#include "collider.hpp"
+#include "collidable.hpp"
 
-class Tile : public sf::RectangleShape {
+class Tile : public Collidable {
 public:
     Tile(sf::Texture& tileTexture, char function, const sf::Vector2f& position);
-
-    Collider getCollider();
 
     char getFunction() const;
 

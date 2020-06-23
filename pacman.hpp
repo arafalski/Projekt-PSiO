@@ -3,10 +3,10 @@
 
 #include <SFML/Audio.hpp>
 #include <SFML/Graphics.hpp>
-#include "collider.hpp"
+#include "collidable.hpp"
 #include "consts.hpp"
 
-class Pacman : public sf::RectangleShape {
+class Pacman : public Collidable {
 public:
     Pacman(sf::Texture* pacmanTexture, size_t imageCount, float switchTime, float speed, sf::SoundBuffer& soundBuffer);
 
@@ -17,8 +17,6 @@ public:
     void animationUpdate(float deltaTime);
 
     void onCollision(Direction dir);
-
-    Collider getCollider();
 
     bool duringCollision = false;
 
