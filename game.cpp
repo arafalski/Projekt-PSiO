@@ -26,11 +26,11 @@ Game::Game()
     m_background.setTextureRect(
             sf::IntRect(0, 0, static_cast<int>(2 * MAP_WIDTH * TILE), static_cast<int>(2 * MAP_HEIGHT * TILE)));
 
-    Configuration::loadSoundBuffer(hitSoundBuffer);
+    Configuration::loadSoundBuffer(m_hitSoundBuffer);
 }
 
 void Game::runGame() {
-    Pacman player(&m_textures.at("pacman"), 2, 0.15f, 200.0f, hitSoundBuffer);
+    Pacman player(&m_textures.at("pacman"), 2, 0.15f, 200.0f, m_hitSoundBuffer);
     m_view.setCenter(player.getPosition());
 
     Map tileMap(m_textures.at("wall"), m_textures.at("start"), m_textures.at("end"), m_textures.at("point"));
