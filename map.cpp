@@ -45,8 +45,9 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
     std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> maze{};
     std::stack<sf::Vector2u> backtrack;
     size_t visitedCells;
-    std::mt19937 generator(
-            static_cast<unsigned int>(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
+
+    std::random_device rd;
+    std::mt19937 generator(rd());
 
     size_t longestPath = 0;
     sf::Vector2u endCell;
@@ -76,7 +77,8 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
         neighbours.shrink_to_fit();
 
         if (!neighbours.empty()) {
-            Direction nextDir = neighbours[generator() % neighbours.size()];
+            std::uniform_int_distribution<size_t> distrib(0, neighbours.size() - 1);
+            Direction nextDir = neighbours[distrib(generator)];
             sf::Vector2u actualCell = backtrack.top();
             sf::Vector2u nextCell = backtrack.top();
             sf::Vector2u index;
