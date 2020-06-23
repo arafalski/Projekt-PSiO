@@ -63,10 +63,10 @@ class polyCell {
 }
 
 class Cell {
-    +std::array<std::array<char, 2>, 2> grid{{{'#', '#'}, {'#', ' '}}};
-    +void visit() { visited = true; }
-    +bool wasVisited() const { return visited; }
-    -bool visited = false;
+    +std::array<std::array<char, 2>, 2> grid{{{'#', '#'}, {'#', ' '}}}
+    +void visit()
+    +bool wasVisited() const
+    -bool visited = false
 }
 
 class Collider {
@@ -129,10 +129,10 @@ enum Direction{
     WEST
 }
 
-Game o-- "1..1" Pacman
+Game o---down "1..1" Pacman
 Game *-- "1..1" Map
-Game .. Configuration
-Game .. Screens
+Game <-- Configuration : use
+Game <-- Screens : use
 
 Map *-- "1..1" Light
 Map *-- "0..*" Cell
