@@ -69,13 +69,9 @@ class Cell {
     -bool visited = false
 }
 
-class Collider {
-    +explicit Collider(sf::RectangleShape& body)
-    +void move(float dx, float dy)
-    +bool checkCollision(Collider& other, Direction& dir)
-    +sf::Vector2f getPosition() const
+class Collidable {
+    +bool checkCollision(Collidable& other, Direction& dir)
     +sf::Vector2f getHalfSize() const
-    -sf::RectangleShape& m_body
 }
 
 class Configuration {
@@ -90,13 +86,12 @@ class Leaderboard {
     -std::vector<float> m_bestTimes
 }
 
-class Pacman <extends sf::RectangleShape> {
+class Pacman {
     +Pacman(sf::Texture* pacmanTexture, size_t imageCount, float switchTime, float speed, sf::SoundBuffer& soundBuffer)
     +~Pacman() override = default
     +void update(float deltaTime, const sf::Vector2f& targetPosition)
     +void animationUpdate(float deltaTime)
     +void onCollision(Direction dir)
-    +Collider getCollider()
     +bool duringCollision = false
     -float m_speed
     -sf::Vector2f m_velocity
@@ -113,9 +108,8 @@ class Screens {
     +{static} void finalScreen(sf::RenderWindow& window, const sf::Font& font, const std::string& strPlayingTime)
 }
 
-class Tile <extends sf::RectangleShape> {
+class Tile {
     +Tile(sf::Texture& tileTexture, char function, const sf::Vector2f& position)
-    +Collider getCollider()
     +char getFunction() const
     +void drawSprite(sf::RenderWindow& window) const
     -char m_function
@@ -131,8 +125,8 @@ enum Direction{
 
 Game o---down "1..1" Pacman
 Game *-- "1..1" Map
-Game <-- Configuration : use
-Game <-- Screens : use
+Game <|-- Configuration : use
+Game <|-- Screens : use
 
 Map *-- "1..1" Light
 Map *-- "0..*" Cell
@@ -141,8 +135,8 @@ Map o-- "0..*" Tile
 Light +-- "0..*" polyCell
 Light +-- "0..*" Edge
 
-Pacman "1..1" *-- "1..1" Collider
-Tile "1..1" *-- "1..1" Collider
+Pacman <|-- Collidable : Inheritance
+Tile <|--  Collidable : Inheritance
 
 Screens *-- "1..1"Leaderboard
 @enduml
