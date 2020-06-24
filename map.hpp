@@ -31,7 +31,7 @@ private:
 
     Light light;
 
-    void loadMapTolightSystem(const std::vector<std::vector<char>>& cells);
+    void loadMapToLightSystem(const std::vector<std::vector<char>>& cells);
 
     std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
 

@@ -21,8 +21,7 @@ Light::Light(const std::vector<std::vector<char>>& cellsInChars) {
     for (unsigned int i = 1; i < cells.size() - 1; i++) {
         for (unsigned int j = 1; j < cells[i].size() - 1; j++) {
 
-            auto checkEdge = [&](const auto& edgeOwner, const auto& startOffset, const auto& endOffset,
-                                 const auto dir) {
+            auto checkEdge = [&](const auto& edgeOwner, const auto& startOffset, const auto dir) {
                 if (cells[edgeOwner.y][edgeOwner.x].edge[dir].second) {
                     if (dir == Direction::WEST || dir == Direction::EAST) {
                         m_edges[cells[edgeOwner.y][edgeOwner.x].edge[dir].first].end.y += TILE;
@@ -35,9 +34,13 @@ Light::Light(const std::vector<std::vector<char>>& cellsInChars) {
                     m_edges.emplace_back(Edge());
                     m_edges.back().start.x = static_cast<float>(startOffset.x) * TILE - TILE / 2;
                     m_edges.back().start.y = static_cast<float>(startOffset.y) * TILE - TILE / 2;
-                    m_edges.back().end.x = m_edges.back().start.x + TILE * endOffset.x;
-                    m_edges.back().end.y = m_edges.back().start.y + TILE * endOffset.y;
-
+                    if (dir == Direction::WEST || dir == Direction::EAST) {
+                        m_edges.back().end.x = m_edges.back().start.x;
+                        m_edges.back().end.y = m_edges.back().start.y + TILE;
+                    } else{
+                        m_edges.back().end.x = m_edges.back().start.x + TILE;
+                        m_edges.back().end.y = m_edges.back().start.y;
+                    }
                     cells[i][j].edge[dir].first = m_edges.size() - 1;
                     cells[i][j].edge[dir].second = true;
                 }
@@ -45,19 +48,19 @@ Light::Light(const std::vector<std::vector<char>>& cellsInChars) {
 
             if (cells[i][j].exist) {
                 if (!cells[i][j - 1].exist) {
-                    checkEdge(sf::Vector2u(j, i - 1), sf::Vector2u(j, i), sf::Vector2f(0, 1), Direction::WEST);
+                    checkEdge(sf::Vector2u(j, i - 1), sf::Vector2u(j, i), Direction::WEST);
                 }
 
                 if (!cells[i][j + 1].exist) {
-                    checkEdge(sf::Vector2u(j, i - 1), sf::Vector2u(j + 1, i), sf::Vector2f(0, 1), Direction::EAST);
+                    checkEdge(sf::Vector2u(j, i - 1), sf::Vector2u(j + 1, i), Direction::EAST);
                 }
 
                 if (!cells[i - 1][j].exist) {
-                    checkEdge(sf::Vector2u(j - 1, i), sf::Vector2u(j, i), sf::Vector2f(1, 0), Direction::NORTH);
+                    checkEdge(sf::Vector2u(j - 1, i), sf::Vector2u(j, i), Direction::NORTH);
                 }
 
                 if (!cells[i + 1][j].exist) {
-                    checkEdge(sf::Vector2u(j - 1, i), sf::Vector2u(j, i + 1), sf::Vector2f(1, 0), Direction::SOUTH);
+                    checkEdge(sf::Vector2u(j - 1, i), sf::Vector2u(j, i + 1), Direction::SOUTH);
                 }
             }
         }
@@ -148,7 +151,7 @@ void Light::checkVisibility(const sf::Vector2f& playerPos, const sf::Vector2f& m
         checkIntersection(angle, playerPos);
     }
 
-    sortAndEraseDuplicatesVisiblePoints();
+    sortAndEraseDuplicates();
 }
 
 void Light::checkIntersection(float angle, const sf::Vector2f& playerPos) {
@@ -203,7 +206,7 @@ void Light::checkIntersection(float angle, const sf::Vector2f& playerPos) {
     }
 }
 
-void Light::sortAndEraseDuplicatesVisiblePoints() {
+void Light::sortAndEraseDuplicates() {
     auto sortAngles = [](const auto& lhs, const auto& rhs) {
         return lhs.first < rhs.first;
     };

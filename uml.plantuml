@@ -30,7 +30,7 @@ class Map {
     +Light& getLight()
     -std::vector<Tile> m_mapGrid
     -Light light
-    -void loadMapTolightSystem(const std::vector<std::vector<char>>& cells)
+    -void loadMapToLightSystem(const std::vector<std::vector<char>>& cells)
     -std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement()
     -std::vector<std::vector<char>> mazeToChar(const std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT>& maze)
 }
@@ -45,7 +45,7 @@ class Light {
     -void addPolyMapBoundary()
     -float angleCount(sf::Vector2f vec)
     -void checkIntersection(float angle, const sf::Vector2f& playerPos)
-    -void sortAndEraseDuplicatesVisiblePoints()
+    -void sortAndEraseDuplicates()
 }
 
 class Edge {

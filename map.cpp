@@ -10,7 +10,7 @@
 
 Map::Map(sf::Texture& wallTexture, sf::Texture& startTexture, sf::Texture& endTexture, sf::Texture& pointTexture) {
     std::vector<std::vector<char>> cells = mazeToChar(generateTilesPlacement());
-    std::thread loadLight(&Map::loadMapTolightSystem, this, cells);
+    std::thread loadLight(&Map::loadMapToLightSystem, this, cells);
 
     for (std::size_t i = 0; i < cells.size(); i++) {
         for (std::size_t j = 0; j < cells[i].size(); j++) {
@@ -34,7 +34,7 @@ Map::Map(sf::Texture& wallTexture, sf::Texture& startTexture, sf::Texture& endTe
     loadLight.join();
 }
 
-void Map::loadMapTolightSystem(const std::vector<std::vector<char>>& cells) {
+void Map::loadMapToLightSystem(const std::vector<std::vector<char>>& cells) {
     std::mutex m;
     const std::lock_guard<std::mutex> lock(m);
 
@@ -53,7 +53,7 @@ std::array<std::array<Map::Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlace
     sf::Vector2u endCell;
 
     //Adding starting point
-    backtrack.push(sf::Vector2u(0, 0));
+    backtrack.emplace(sf::Vector2u(0, 0));
     visitedCells = 1;
     maze.front().front().visited = true;
     maze.front().front().grid[1][1] = 's';
