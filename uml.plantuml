@@ -69,7 +69,7 @@ class Cell {
     -bool visited = false
 }
 
-class Collidable {
+class Collidable <extends sf::RectangleShape> {
     +bool checkCollision(Collidable& other, Direction& dir)
     +sf::Vector2f getHalfSize() const
 }
@@ -125,8 +125,8 @@ enum Direction{
 
 Game o---down "1..1" Pacman
 Game *-- "1..1" Map
-Game <|-- Configuration : use
-Game <|-- Screens : use
+Game <-- Configuration
+Game <-- Screens
 
 Map *-- "1..1" Light
 Map *-- "0..*" Cell
@@ -135,8 +135,8 @@ Map o-- "0..*" Tile
 Light +-- "0..*" polyCell
 Light +-- "0..*" Edge
 
-Pacman <|-- Collidable : Inheritance
-Tile <|--  Collidable : Inheritance
+Pacman <|-- Collidable
+Tile <|--  Collidable
 
 Screens *-- "1..1"Leaderboard
 @enduml
