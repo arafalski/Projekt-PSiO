@@ -6,10 +6,9 @@
 
 #include <SFML/Graphics.hpp>
 #include "consts.hpp"
-#include "pacman.hpp"
 
 namespace {
-    constexpr auto MAX_RADIUS = 150.f;
+    constexpr auto MAX_RADIUS = 200.f;
 }
 
 class Light {
@@ -18,7 +17,7 @@ public:
 
     explicit Light(const std::vector<std::vector<char>>& cellsInChars);
 
-    void checkVisibility(const Pacman& player, const sf::Vector2f& mousePos);
+    void checkVisibility(const sf::Vector2f& playerPos, const sf::Vector2f& mousePos);
 
     void drawLight(const sf::Vector2f& playerPos, sf::RenderWindow& window);
 

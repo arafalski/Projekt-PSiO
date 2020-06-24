@@ -87,7 +87,7 @@ void Game::runGame() {
             Screens::finalScreen(m_window, m_font, strPlayingTime);
         }
 
-        tileMap.getLight().checkVisibility(player, mousePos);
+        tileMap.getLight().checkVisibility(player.getPosition(), mousePos);
 
         m_view.setCenter(player.getPosition());
         m_timeText.setPosition(player.getPosition().x + 20.0f, player.getPosition().y);
