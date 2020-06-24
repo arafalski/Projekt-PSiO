@@ -64,9 +64,7 @@ class polyCell {
 
 class Cell {
     +std::array<std::array<char, 2>, 2> grid{{{'#', '#'}, {'#', ' '}}}
-    +void visit()
-    +bool wasVisited() const
-    -bool visited = false
+    +bool visited = false
 }
 
 class Collidable <extends sf::RectangleShape> {
@@ -129,7 +127,7 @@ Game <-- Configuration
 Game <-- Screens
 
 Map *-- "1..1" Light
-Map *-- "0..*" Cell
+Map +-- "0..*" Cell
 Map o-- "0..*" Tile
 
 Light +-- "0..*" polyCell
