@@ -21,7 +21,7 @@ private:
     sf::Font m_font;
     sf::Text m_timeText;
     sf::Sprite m_background;
-    sf::SoundBuffer hitSoundBuffer;
+    sf::SoundBuffer m_hitSoundBuffer;
     std::map<std::string, sf::Texture> m_textures;
 
     float m_deltaTime;

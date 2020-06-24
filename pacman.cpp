@@ -6,7 +6,7 @@
 
 Pacman::Pacman(sf::Texture* pacmanTexture, size_t imageCount, float switchTime, float speed,
                sf::SoundBuffer& soundBuffer)
-        : m_speed(speed), m_imageCount(imageCount), m_switchTime(switchTime) {
+        : m_speed(speed), m_imageCount(imageCount), m_totalTime(0.0f), m_switchTime(switchTime) {
     setSize(sf::Vector2f(40.0f, 40.0f));
     setOrigin(getSize() / 2.0f);
     setPosition(TILE, TILE);
@@ -80,8 +80,4 @@ void Pacman::onCollision(Direction dir) {
     if (!duringCollision) {
         m_hitSound.play();
     }
-}
-
-Collider Pacman::getCollider() {
-    return Collider(*this);
 }

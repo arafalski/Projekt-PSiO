@@ -28,7 +28,7 @@ Light::Light(const std::vector<std::vector<char>>& cellsInChars) {
                         m_edges[cells[edgeOwner.y][edgeOwner.x].edge[dir].first].end.y += TILE;
                     } else {
                         m_edges[cells[edgeOwner.y][edgeOwner.x].edge[dir].first].end.x += TILE;
-                    };
+                    }
                     cells[i][j].edge[dir].first = cells[edgeOwner.y][edgeOwner.x].edge[dir].first;
                     cells[i][j].edge[dir].second = true;
                 } else {
@@ -106,15 +106,15 @@ float Light::angleCount(sf::Vector2f vec) {
     return angle;
 }
 
-void Light::checkVisibility(const Pacman& player, const sf::Vector2f& mousePos) {
+void Light::checkVisibility(const sf::Vector2f& playerPos, const sf::Vector2f& mousePos) {
     m_visiblePolyPoints.clear();
-    auto playerPos = player.getPosition();
     auto toCursor = mousePos - playerPos;
 
     sf::Vector2f firstBorder(toCursor.x - toCursor.y, toCursor.x + toCursor.y);
     auto firstAngle = angleCount(firstBorder);
 
     std::vector<float> visibleAngles(90);
+    visibleAngles.reserve(2 * m_edges.size() + 90);
     std::generate(visibleAngles.begin(), visibleAngles.end(), [i{firstAngle - 1}]() mutable {
         if (++i >= 360.f) i = 0.0f;
         return i;
@@ -165,13 +165,22 @@ void Light::checkIntersection(float angle, const sf::Vector2f& playerPos) {
         bool hitSomething = false;
 
         for (const auto& edge : m_edges) {
-            sf::Vector2f segment(edge.end.x - edge.start.x,
-                                 edge.end.y - edge.start.y);
+            sf::Vector2f wall(edge.end.x - edge.start.x,
+                              edge.end.y - edge.start.y);
 
-            if (std::abs(segment.x - ray.x) > 0.0f && std::abs(segment.y - ray.y) > 0.0f) {
-                auto t2 = (ray.x * (edge.start.y - playerPos.y) + (ray.y * (playerPos.x - edge.start.x)))
-                          / (ray.y * segment.x - ray.x * segment.y);
-                auto t1 = (edge.start.x - playerPos.x + segment.x * t2) / ray.x;
+            // Ray parametric equation:
+            // x = playerPos.x + ray.x * t1
+            // y = playerPos.y + ray.y * t2
+            //
+            // Wall parametric equation:
+            // x = edge.start.x + wall.x * t2
+            // y = edge.start.y + wall.y * t2
+
+            if (((wall.x * ray.x + wall.y * ray.y) /
+                 sqrtf((wall.x * wall.x + wall.y * wall.y) * (ray.x * ray.x + ray.y * ray.y))) != 1.0f) {
+                auto t2 = (ray.x * (edge.start.y - playerPos.y) - (ray.y * (edge.start.x - playerPos.x))) /
+                          (ray.y * wall.x - ray.x * wall.y);
+                auto t1 = (edge.start.x - playerPos.x + wall.x * t2) / ray.x;
 
                 if (t1 > 0.0f && t2 >= 0.0f && t2 <= 1.0f && t1 < minT1) {
                     minT1 = t1;

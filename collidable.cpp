@@ -1,13 +1,7 @@
-#include "collider.hpp"
+#include "collidable.hpp"
 #include <cmath>
 
-Collider::Collider(sf::RectangleShape& body) : m_body(body) {}
-
-void Collider::move(float dx, float dy) {
-    m_body.move(dx, dy);
-}
-
-bool Collider::checkCollision(Collider& other, Direction& dir) {
+bool Collidable::checkCollision(Collidable& other, Direction& dir) {
     sf::Vector2f otherHalfSize = other.getHalfSize();
     sf::Vector2f thisHalfSize = getHalfSize();
 
@@ -42,10 +36,6 @@ bool Collider::checkCollision(Collider& other, Direction& dir) {
     return false;
 }
 
-sf::Vector2f Collider::getPosition() const {
-    return m_body.getPosition();
-}
-
-sf::Vector2f Collider::getHalfSize() const {
-    return m_body.getSize() / 2.0f;
+sf::Vector2f Collidable::getHalfSize() const {
+    return getSize() / 2.0f;
 }

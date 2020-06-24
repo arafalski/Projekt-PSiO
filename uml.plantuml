@@ -1,16 +1,23 @@
 @startuml Projekt PSiO
 
+title
+Projekt zaliczeniowy z przedmiotu <i>Programowanie strukturalne i obiektowe</i>
+Andrzej Rafalski
+end title
+
 class Game {
     +Game()
     +void runGame()
     -sf::RenderWindow m_window
     -sf::View m_view
     -sf::Image m_icon
+    ..
     -sf::Font m_font
     -sf::Text m_timeText
     -sf::Sprite m_background
     -sf::SoundBuffer m_hitSoundBuffer
     -std::map<std::string, sf::Texture> m_textures
+    ..
     -float m_deltaTime
     -float m_playingTime = 0.0f
     -bool m_endTileHit = false
@@ -56,25 +63,21 @@ class polyCell {
 }
 
 class Cell {
-    +std::array<std::array<char, 2>, 2> grid{{{'#', '#'}, {'#', ' '}}};
-    +void visit() { visited = true; }
-    +bool wasVisited() const { return visited; }
-    -bool visited = false;
+    +std::array<std::array<char, 2>, 2> grid{{{'#', '#'}, {'#', ' '}}}
+    +void visit()
+    +bool wasVisited() const
+    -bool visited = false
 }
 
-class Collider {
-    +explicit Collider(sf::RectangleShape& body)
-    +void move(float dx, float dy)
-    +bool checkCollision(Collider& other, Direction& dir)
-    +sf::Vector2f getPosition() const
+class Collidable <extends sf::RectangleShape> {
+    +bool checkCollision(Collidable& other, Direction& dir)
     +sf::Vector2f getHalfSize() const
-    -sf::RectangleShape& m_body
 }
 
 class Configuration {
-    +static void textConfig(sf::Text& text, const sf::Font& font, const std::string& textToWrite, unsigned int characterSize, const sf::Color& color)
-    +static void loadTextures(std::map<std::string, sf::Texture>& textureMap)
-    +static void loadSoundBuffer(sf::SoundBuffer& soundBufferToLoad)
+    +{static} void textConfig(sf::Text& text, const sf::Font& font, const std::string& textToWrite, unsigned int characterSize, const sf::Color& color)
+    +{static} void loadTextures(std::map<std::string, sf::Texture>& textureMap)
+    +{static} void loadSoundBuffer(sf::SoundBuffer& soundBufferToLoad)
 }
 
 class Leaderboard {
@@ -83,13 +86,12 @@ class Leaderboard {
     -std::vector<float> m_bestTimes
 }
 
-class Pacman <extends sf::RectangleShape> {
+class Pacman {
     +Pacman(sf::Texture* pacmanTexture, size_t imageCount, float switchTime, float speed, sf::SoundBuffer& soundBuffer)
     +~Pacman() override = default
     +void update(float deltaTime, const sf::Vector2f& targetPosition)
     +void animationUpdate(float deltaTime)
     +void onCollision(Direction dir)
-    +Collider getCollider()
     +bool duringCollision = false
     -float m_speed
     -sf::Vector2f m_velocity
@@ -102,13 +104,12 @@ class Pacman <extends sf::RectangleShape> {
 }
 
 class Screens {
-    +static void mainMenu(sf::RenderWindow& window, const sf::Font& font);
-    +static void finalScreen(sf::RenderWindow& window, const sf::Font& font, const std::string& strPlayingTime)
+    +{static} void mainMenu(sf::RenderWindow& window, const sf::Font& font);
+    +{static} void finalScreen(sf::RenderWindow& window, const sf::Font& font, const std::string& strPlayingTime)
 }
 
-class Tile <extends sf::RectangleShape> {
+class Tile {
     +Tile(sf::Texture& tileTexture, char function, const sf::Vector2f& position)
-    +Collider getCollider()
     +char getFunction() const
     +void drawSprite(sf::RenderWindow& window) const
     -char m_function
@@ -122,18 +123,20 @@ enum Direction{
     WEST
 }
 
-Game o-- "1..1" Pacman
+Game o---down "1..1" Pacman
 Game *-- "1..1" Map
+Game <-- Configuration
+Game <-- Screens
 
 Map *-- "1..1" Light
-Map o-- "0..*" Cell
+Map *-- "0..*" Cell
 Map o-- "0..*" Tile
 
 Light +-- "0..*" polyCell
 Light +-- "0..*" Edge
 
-Pacman *-- "1..1" Collider
-Tile *-- "1..1" Collider
+Pacman <|-- Collidable
+Tile <|--  Collidable
 
 Screens *-- "1..1"Leaderboard
 @enduml
