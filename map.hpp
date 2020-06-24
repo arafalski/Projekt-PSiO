@@ -5,7 +5,6 @@
 #include <vector>
 
 #include <SFML/Graphics.hpp>
-#include "cell.hpp"
 #include "consts.hpp"
 #include "light.hpp"
 #include "pacman.hpp"
@@ -24,9 +23,15 @@ public:
 private:
     std::vector<Tile> m_mapGrid;
 
+    struct Cell {
+        std::array<std::array<char, 2>, 2> grid{{{'#', '#'},
+                                                        {'#', ' '}}};
+        bool visited = false;
+    };
+
     Light light;
 
-    void loadMapTolightSystem(const std::vector<std::vector<char>>& cells);
+    void loadMapToLightSystem(const std::vector<std::vector<char>>& cells);
 
     std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement();
 
