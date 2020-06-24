@@ -41,7 +41,7 @@ void Map::loadMapTolightSystem(const std::vector<std::vector<char>>& cells) {
     light = Light(cells);
 }
 
-std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement() {
+std::array<std::array<Map::Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement() {
     std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> maze{};
     std::stack<sf::Vector2u> backtrack;
     size_t visitedCells;
@@ -55,23 +55,23 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
     //Adding starting point
     backtrack.push(sf::Vector2u(0, 0));
     visitedCells = 1;
-    maze.front().front().visit();
+    maze.front().front().visited = true;
     maze.front().front().grid[1][1] = 's';
 
     do {
         std::vector<Direction> neighbours;
         neighbours.reserve(4);
 
-        if (backtrack.top().y > 0 && !maze[backtrack.top().y - 1][backtrack.top().x].wasVisited()) {
+        if (backtrack.top().y > 0 && !maze[backtrack.top().y - 1][backtrack.top().x].visited) {
             neighbours.emplace_back(Direction::NORTH);
         }
-        if (backtrack.top().y < MAP_HEIGHT - 1 && !maze[backtrack.top().y + 1][backtrack.top().x].wasVisited()) {
+        if (backtrack.top().y < MAP_HEIGHT - 1 && !maze[backtrack.top().y + 1][backtrack.top().x].visited) {
             neighbours.emplace_back(Direction::SOUTH);
         }
-        if (backtrack.top().x < MAP_WIDTH - 1 && !maze[backtrack.top().y][backtrack.top().x + 1].wasVisited()) {
+        if (backtrack.top().x < MAP_WIDTH - 1 && !maze[backtrack.top().y][backtrack.top().x + 1].visited) {
             neighbours.emplace_back(Direction::EAST);
         }
-        if (backtrack.top().x > 0 && !maze[backtrack.top().y][backtrack.top().x - 1].wasVisited()) {
+        if (backtrack.top().x > 0 && !maze[backtrack.top().y][backtrack.top().x - 1].visited) {
             neighbours.emplace_back(Direction::WEST);
         }
         neighbours.shrink_to_fit();
@@ -110,7 +110,7 @@ std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlacement(
 
             maze[actualCell.y][actualCell.x].grid[index.y][index.x] = ' ';
             backtrack.push(nextCell);
-            maze[backtrack.top().y][backtrack.top().x].visit();
+            maze[backtrack.top().y][backtrack.top().x].visited = true;
             visitedCells++;
         } else {
             if (backtrack.size() >= longestPath) {
