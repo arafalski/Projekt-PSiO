@@ -46,8 +46,8 @@ std::array<std::array<Map::Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlace
     std::stack<sf::Vector2u> backtrack;
     size_t visitedCells;
 
-    std::random_device rd;
-    std::mt19937 generator(rd());
+    std::mt19937 generator(
+            static_cast<unsigned int>(std::chrono::high_resolution_clock::now().time_since_epoch().count()));
 
     size_t longestPath = 0;
     sf::Vector2u endCell;
@@ -58,69 +58,60 @@ std::array<std::array<Map::Cell, MAP_WIDTH>, MAP_HEIGHT> Map::generateTilesPlace
     maze.front().front().visited = true;
     maze.front().front().grid[1][1] = 's';
 
-    do {
+    while (!backtrack.empty()) {
+        sf::Vector2u currentCell = backtrack.top();
+        if (backtrack.size() >= longestPath) {
+            longestPath = backtrack.size();
+            endCell = currentCell;
+        }
+        backtrack.pop();
+
         std::vector<Direction> neighbours;
         neighbours.reserve(4);
 
-        if (backtrack.top().y > 0 && !maze[backtrack.top().y - 1][backtrack.top().x].visited) {
+        if (currentCell.y > 0 && !maze[currentCell.y - 1][currentCell.x].visited) {
             neighbours.emplace_back(Direction::NORTH);
         }
-        if (backtrack.top().y < MAP_HEIGHT - 1 && !maze[backtrack.top().y + 1][backtrack.top().x].visited) {
+        if (currentCell.y < MAP_HEIGHT - 1 && !maze[currentCell.y + 1][currentCell.x].visited) {
             neighbours.emplace_back(Direction::SOUTH);
         }
-        if (backtrack.top().x < MAP_WIDTH - 1 && !maze[backtrack.top().y][backtrack.top().x + 1].visited) {
+        if (currentCell.x < MAP_WIDTH - 1 && !maze[currentCell.y][currentCell.x + 1].visited) {
             neighbours.emplace_back(Direction::EAST);
         }
-        if (backtrack.top().x > 0 && !maze[backtrack.top().y][backtrack.top().x - 1].visited) {
+        if (currentCell.x > 0 && !maze[currentCell.y][currentCell.x - 1].visited) {
             neighbours.emplace_back(Direction::WEST);
         }
         neighbours.shrink_to_fit();
 
         if (!neighbours.empty()) {
-            std::uniform_int_distribution<size_t> distrib(0, neighbours.size() - 1);
-            Direction nextDir = neighbours[distrib(generator)];
-            sf::Vector2u actualCell = backtrack.top();
-            sf::Vector2u nextCell = backtrack.top();
-            sf::Vector2u index;
+            backtrack.push(currentCell);
+            Direction nextDir = neighbours[generator() % neighbours.size()];
+            sf::Vector2u chosenCell = currentCell;
 
             switch (nextDir) {
                 case Direction::NORTH:
-                    index.x = 1;
-                    index.y = 0;
-                    nextCell.y--;
+                    chosenCell.y--;
+                    maze[currentCell.y][currentCell.x].grid[0][1] = ' ';
                     break;
                 case Direction::SOUTH:
-                    index.x = 1;
-                    index.y = 0;
-                    actualCell.y++;
-                    nextCell.y++;
+                    chosenCell.y++;
+                    maze[currentCell.y + 1][currentCell.x].grid[0][1] = ' ';
                     break;
                 case Direction::EAST:
-                    index.x = 0;
-                    index.y = 1;
-                    actualCell.x++;
-                    nextCell.x++;
+                    chosenCell.x++;
+                    maze[currentCell.y][currentCell.x + 1].grid[1][0] = ' ';
                     break;
                 case Direction::WEST:
-                    index.x = 0;
-                    index.y = 1;
-                    nextCell.x--;
+                    chosenCell.x--;
+                    maze[currentCell.y][currentCell.x].grid[1][0] = ' ';
                     break;
             }
 
-            maze[actualCell.y][actualCell.x].grid[index.y][index.x] = ' ';
-            backtrack.push(nextCell);
-            maze[backtrack.top().y][backtrack.top().x].visited = true;
+            backtrack.push(chosenCell);
+            maze[chosenCell.y][chosenCell.x].visited = true;
             visitedCells++;
-        } else {
-            if (backtrack.size() >= longestPath) {
-                longestPath = backtrack.size();
-                endCell = backtrack.top();
-            }
-            backtrack.pop();
         }
-    } while (visitedCells < MAP_WIDTH * MAP_HEIGHT);
-
+    }
     maze[endCell.y][endCell.x].grid[1][1] = 'e';
 
     return maze;
