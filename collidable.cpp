@@ -2,14 +2,10 @@
 #include <cmath>
 
 bool Collidable::checkCollision(Collidable& other, Direction& dir) {
-    sf::Vector2f otherHalfSize = other.getHalfSize();
-    sf::Vector2f thisHalfSize = getHalfSize();
-
     sf::Vector2f delta = other.getPosition() - getPosition();
-
-    sf::Vector2f intersect;
-    intersect.x = std::abs(delta.x) - (otherHalfSize.x + thisHalfSize.x);
-    intersect.y = std::abs(delta.y) - (otherHalfSize.y + thisHalfSize.y);
+    sf::Vector2f minDistWithoutCollision = other.getSize() / 2.0f + getSize() / 2.0f;
+    sf::Vector2f intersect(std::abs(delta.x) - minDistWithoutCollision.x,
+                           std::abs(delta.y) - minDistWithoutCollision.y);
 
     if (intersect.x < 0.0f && intersect.y < 0.0f) {
         if (intersect.x > intersect.y) {
@@ -29,13 +25,7 @@ bool Collidable::checkCollision(Collidable& other, Direction& dir) {
                 dir = Direction::NORTH;
             }
         }
-
         return true;
     }
-
     return false;
-}
-
-sf::Vector2f Collidable::getHalfSize() const {
-    return getSize() / 2.0f;
 }
