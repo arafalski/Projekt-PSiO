@@ -23,10 +23,13 @@ Light::Light(const std::vector<std::vector<char>>& cellsInChars) {
 
             auto checkEdge = [&](const auto& edgeOwner, const auto& startOffset, const auto dir) {
                 if (cells[edgeOwner.y][edgeOwner.x].edge[dir].second) {
-                    if (dir == Direction::WEST || dir == Direction::EAST) {
-                        m_edges[cells[edgeOwner.y][edgeOwner.x].edge[dir].first].end.y += TILE;
-                    } else {
-                        m_edges[cells[edgeOwner.y][edgeOwner.x].edge[dir].first].end.x += TILE;
+                    switch (dir) {
+                        case Direction::WEST:
+                        case Direction::EAST:
+                            m_edges[cells[edgeOwner.y][edgeOwner.x].edge[dir].first].end.y += TILE;
+                            break;
+                        default:
+                            m_edges[cells[edgeOwner.y][edgeOwner.x].edge[dir].first].end.x += TILE;
                     }
                     cells[i][j].edge[dir].first = cells[edgeOwner.y][edgeOwner.x].edge[dir].first;
                     cells[i][j].edge[dir].second = true;
@@ -34,12 +37,15 @@ Light::Light(const std::vector<std::vector<char>>& cellsInChars) {
                     m_edges.emplace_back(Edge());
                     m_edges.back().start.x = static_cast<float>(startOffset.x) * TILE - TILE / 2;
                     m_edges.back().start.y = static_cast<float>(startOffset.y) * TILE - TILE / 2;
-                    if (dir == Direction::WEST || dir == Direction::EAST) {
-                        m_edges.back().end.x = m_edges.back().start.x;
-                        m_edges.back().end.y = m_edges.back().start.y + TILE;
-                    } else{
-                        m_edges.back().end.x = m_edges.back().start.x + TILE;
-                        m_edges.back().end.y = m_edges.back().start.y;
+                    switch (dir) {
+                        case Direction::WEST:
+                        case Direction::EAST:
+                            m_edges.back().end.x = m_edges.back().start.x;
+                            m_edges.back().end.y = m_edges.back().start.y + TILE;
+                            break;
+                        default:
+                            m_edges.back().end.x = m_edges.back().start.x + TILE;
+                            m_edges.back().end.y = m_edges.back().start.y;
                     }
                     cells[i][j].edge[dir].first = m_edges.size() - 1;
                     cells[i][j].edge[dir].second = true;
@@ -90,10 +96,10 @@ void Light::addPolyMapBoundary() {
     Left.end.x = Left.start.x;
     Left.end.y = Left.start.y - 2 * TILE * (MAP_HEIGHT - 0.5f);
 
-    m_edges.emplace_back(Top);
-    m_edges.emplace_back(Right);
-    m_edges.emplace_back(Bottom);
-    m_edges.emplace_back(Left);
+    m_edges.push_back(Top);
+    m_edges.push_back(Right);
+    m_edges.push_back(Bottom);
+    m_edges.push_back(Left);
 }
 
 float Light::angleCount(sf::Vector2f vec) {
