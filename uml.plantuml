@@ -107,11 +107,56 @@ class Screens {
 }
 
 class Tile {
-    +Tile(sf::Texture& tileTexture, char function, const sf::Vector2f& position)
-    +char getFunction() const
-    +void drawSprite(sf::RenderWindow& window) const
-    -char m_function
     -sf::Sprite m_tileSprite
+    --
+    +Tile(sf::Texture& tileTexture, const sf::Vector2f& position)
+    +~Tile() override = default
+    +void drawSprite(sf::RenderWindow& window) const
+    ..Type checkers..
+    +{abstract} bool isStartTile()
+    +{abstract} bool isEndTile()
+    +{abstract} bool isWallTile()
+    +{abstract} bool isPointTile()
+}
+
+class StartTile {
+    +StartTile(sf::Texture& tileTexture, const sf::Vector2f& position)
+    +~StartTile() override = default
+    ..Type checkers..
+    +bool isStartTile()
+    +bool isEndTile()
+    +bool isWallTile()
+    +bool isPointTile()
+}
+
+class EndTile {
+    +EndTile(sf::Texture& tileTexture, const sf::Vector2f& position)
+    +~EndTile() override = default
+    ..Type checkers..
+    +bool isStartTile()
+    +bool isEndTile()
+    +bool isWallTile()
+    +bool isPointTile()
+}
+
+class WallTile {
+    +WallTile(sf::Texture& tileTexture, const sf::Vector2f& position)
+    +~WallTile() override = default
+    ..Type checkers..
+    +bool isStartTile()
+    +bool isEndTile()
+    +bool isWallTile()
+    +bool isPointTile()
+}
+
+class PointTile {
+    +PointTile(sf::Texture& tileTexture, const sf::Vector2f& position)
+    +~PointTile() override = default
+    ..Type checkers..
+    +bool isStartTile()
+    +bool isEndTile()
+    +bool isWallTile()
+    +bool isPointTile()
 }
 
 enum Direction{
@@ -127,14 +172,22 @@ Game -- Configuration
 Game -- Screens
 
 Map *-- "1..1" Light
-Map +-- "0..*" Cell
-Map *-- "0..*" Tile
+Map +---left Cell
+Map *-- "1..1" StartTile
+Map *-- "1..1" EndTile
+Map *-- "0..*" WallTile
+Map *-- "0..*" PointTile
 
-Light +-- "0..*" polyCell
-Light +-- "0..*" Edge
+Light +-- polyCell
+Light +-- Edge
 
 Pacman <|-- Collidable
 Tile <|--  Collidable
+
+StartTile <|-- Tile
+WallTile <|-- Tile
+EndTile <|-- Tile
+PointTile <|-- Tile
 
 Screens *-- "1..1"Leaderboard
 @enduml
