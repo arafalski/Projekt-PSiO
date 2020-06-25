@@ -121,14 +121,14 @@ enum Direction{
     WEST
 }
 
-Game o---down "1..1" Pacman
+Game *---down "1..1" Pacman
 Game *-- "1..1" Map
-Game <-- Configuration
-Game <-- Screens
+Game -- Configuration
+Game -- Screens
 
 Map *-- "1..1" Light
 Map +-- "0..*" Cell
-Map o-- "0..*" Tile
+Map *-- "0..*" Tile
 
 Light +-- "0..*" polyCell
 Light +-- "0..*" Edge
