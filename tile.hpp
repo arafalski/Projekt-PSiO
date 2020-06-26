@@ -6,15 +6,21 @@
 
 class Tile : public Collidable {
 public:
-    Tile(sf::Texture& tileTexture, char function, const sf::Vector2f& position);
+    Tile(sf::Texture& tileTexture, const sf::Vector2f& position);
 
-    char getFunction() const;
+    ~Tile() override = default;
 
     void drawSprite(sf::RenderWindow& window) const;
 
-private:
-    char m_function;
+    virtual bool isStartTile() const = 0;
 
+    virtual bool isEndTile() const = 0;
+
+    virtual bool isWallTile() const = 0;
+
+    virtual bool isPointTile() const = 0;
+
+protected:
     sf::Sprite m_tileSprite;
 };
 

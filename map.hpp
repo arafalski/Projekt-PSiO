@@ -2,6 +2,8 @@
 #define PROJEKT_MAP_HPP
 
 #include <array>
+#include <list>
+#include <memory>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
@@ -21,7 +23,7 @@ public:
     Light& getLight() { return light; }
 
 private:
-    std::vector<Tile> m_mapGrid;
+    std::list<std::unique_ptr<Tile>> m_mapGrid;
 
     struct Cell {
         std::array<std::array<char, 2>, 2> grid{{{'#', '#'},

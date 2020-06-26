@@ -7,8 +7,6 @@
 class Collidable : public sf::RectangleShape {
 public:
     bool checkCollision(Collidable& other, Direction& dir);
-
-    sf::Vector2f getHalfSize() const;
 };
 
 #endif //PROJEKT_COLLIDABLE_HPP

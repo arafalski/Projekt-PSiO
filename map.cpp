@@ -8,6 +8,11 @@
 #include <stack>
 #include <thread>
 
+#include "endTile.hpp"
+#include "pointTile.hpp"
+#include "startTile.hpp"
+#include "wallTile.hpp"
+
 Map::Map(sf::Texture& wallTexture, sf::Texture& startTexture, sf::Texture& endTexture, sf::Texture& pointTexture) {
     std::vector<std::vector<char>> cells = mazeToChar(generateTilesPlacement());
     std::thread loadLight(&Map::loadMapToLightSystem, this, cells);
@@ -18,16 +23,16 @@ Map::Map(sf::Texture& wallTexture, sf::Texture& startTexture, sf::Texture& endTe
             sf::Vector2f position(static_cast<float>(j) * TILE, static_cast<float>(i) * TILE);
             switch (cells[i][j]) {
                 case '#':
-                    m_mapGrid.emplace_back(Tile(wallTexture, '#', position));
+                    m_mapGrid.push_back(std::make_unique<WallTile>(WallTile(wallTexture, position)));
                     break;
                 case 's':
-                    m_mapGrid.emplace_back(Tile(startTexture, 's', position));
+                    m_mapGrid.push_back(std::make_unique<StartTile>(StartTile(startTexture, position)));
                     break;
                 case 'e':
-                    m_mapGrid.emplace_back(Tile(endTexture, 'e', position));
+                    m_mapGrid.push_back(std::make_unique<EndTile>(EndTile(endTexture, position)));
                     break;
                 default:
-                    m_mapGrid.emplace_back(Tile(pointTexture, 'p', position));
+                    m_mapGrid.push_back(std::make_unique<PointTile>(PointTile(pointTexture, position)));
             }
         }
     }
@@ -151,7 +156,7 @@ std::vector<std::vector<char>> Map::mazeToChar(const std::array<std::array<Cell,
 
 void Map::draw(sf::RenderWindow& window) const {
     for (const auto& cell : m_mapGrid) {
-        cell.drawSprite(window);
+        cell->drawSprite(window);
     }
 }
 
@@ -160,18 +165,16 @@ void Map::collisionDetection(Pacman& player, bool& endTileHit) {
 
     auto hitPointIt = m_mapGrid.end();
     bool hitWall = false;
-    for (std::size_t i = 0; i < m_mapGrid.size(); i++) {
 
-        if (m_mapGrid[i].getFunction() == '#' && m_mapGrid[i].checkCollision(player, dir)) {
+    for (auto it = m_mapGrid.begin(); it != m_mapGrid.end(); ++it) {
+        if ((*it)->isWallTile() && player.checkCollision(**it, dir)) {
             player.onCollision(dir);
             player.duringCollision = true;
             hitWall = true;
-        } else if (m_mapGrid[i].getFunction() == 'e' &&
-                   m_mapGrid[i].getGlobalBounds().intersects(player.getGlobalBounds())) {
+        } else if ((*it)->isEndTile() && (*it)->getGlobalBounds().intersects(player.getGlobalBounds())) {
             endTileHit = true;
-        } else if (m_mapGrid[i].getFunction() == 'p' &&
-                   m_mapGrid[i].getGlobalBounds().intersects(player.getGlobalBounds())) {
-            hitPointIt = std::next(m_mapGrid.begin(), static_cast<int>(i));
+        } else if ((*it)->isPointTile() && (*it)->getGlobalBounds().intersects(player.getGlobalBounds())) {
+            hitPointIt = it;
         }
     }
 
