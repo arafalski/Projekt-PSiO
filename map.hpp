@@ -2,6 +2,7 @@
 #define PROJEKT_MAP_HPP
 
 #include <array>
+#include <list>
 #include <memory>
 #include <vector>
 
@@ -22,7 +23,7 @@ public:
     Light& getLight() { return light; }
 
 private:
-    std::vector<std::unique_ptr<Tile>> m_mapGrid;
+    std::list<std::unique_ptr<Tile>> m_mapGrid;
 
     struct Cell {
         std::array<std::array<char, 2>, 2> grid{{{'#', '#'},

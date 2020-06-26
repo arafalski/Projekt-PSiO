@@ -167,7 +167,7 @@ void Map::collisionDetection(Pacman& player, bool& endTileHit) {
     bool hitWall = false;
 
     for (auto it = m_mapGrid.begin(); it != m_mapGrid.end(); ++it) {
-        if ((*it)->isWallTile() && (*it)->checkCollision(player, dir)) {
+        if ((*it)->isWallTile() && player.checkCollision(**it, dir)) {
             player.onCollision(dir);
             player.duringCollision = true;
             hitWall = true;

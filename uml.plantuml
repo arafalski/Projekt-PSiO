@@ -28,7 +28,7 @@ class Map {
     +void draw(sf::RenderWindow& window) const
     +void collisionDetection(Pacman& player, bool& endTileHit)
     +Light& getLight()
-    -std::vector<Tile> m_mapGrid
+    -std::list<std::unique_ptr<Tile>> m_mapGrid
     -Light light
     -void loadMapToLightSystem(const std::vector<std::vector<char>>& cells)
     -std::array<std::array<Cell, MAP_WIDTH>, MAP_HEIGHT> generateTilesPlacement()
