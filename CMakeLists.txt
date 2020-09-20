@@ -1,16 +1,31 @@
 cmake_minimum_required(VERSION 3.16)
-
-set(PROJECT_NAME Projekt)
-project(${PROJECT_NAME})
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wall -pedantic -Wextra -Werror -Wconversion -O3")
+project(Projekt)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-set(SFML_DIR "SFML/lib/cmake/SFML")
-find_package(SFML 2.5.1 COMPONENTS graphics audio REQUIRED)
+set(FLAGS -Wall -Wextra -Werror -Wconversion -pedantic -O3)
 
-add_executable(${PROJECT_NAME} main.cpp pacman.cpp pacman.hpp map.hpp consts.hpp map.cpp collidable.cpp collidable.hpp screens.hpp configuration.hpp leaderboard.cpp leaderboard.hpp tile.cpp tile.hpp configuration.cpp screens.cpp light.cpp light.hpp game.cpp game.hpp wallTile.cpp wallTile.hpp startTile.cpp startTile.hpp endTile.cpp endTile.hpp pointTile.cpp pointTile.hpp)
+set(SRC
+    pacman.cpp
+    map.cpp
+    collidable.cpp
+    leaderboard.cpp
+    tile.cpp
+    configuration.cpp
+    screens.cpp
+    light.cpp
+    game.cpp
+    wallTile.cpp
+    startTile.cpp
+    endTile.cpp
+    pointTile.cpp)
 
-target_link_libraries(${PROJECT_NAME} sfml-graphics sfml-audio)
-set(CMAKE_EXE_LINKER_FLAGS "-static")
+add_subdirectory(SFML)
+
+add_library(${PROJECT_NAME}-lib ${SRC})
+target_link_libraries(${PROJECT_NAME}-lib PRIVATE sfml-graphics sfml-audio)
+
+add_executable(${PROJECT_NAME} main.cpp)
+target_compile_options(${PROJECT_NAME} PRIVATE ${FLAGS})
+target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}-lib sfml-graphics sfml-audio)
